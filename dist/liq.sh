@@ -5401,7 +5401,10 @@ liq-dispatch() {
 
 liq-try-core() {
   local COMMAND="${1:-}"
-  local ENDPOINT="/${COMMAND// //}"
+  
+  local ENDPOINT="${COMMAND%%--*}"
+  ENDPOINT="/${ENDPOINT// //}"
+  local PARAMETERS="${COMMAND#*--}"
   
   if ! [[ -f ${LIQ_CORE_API} ]]; then return 1; fi
   
@@ -5412,11 +5415,31 @@ liq-try-core() {
     local MATCHER METHOD
     MATCHER="$(jq -r ".[${i}].matcher" "${LIQ_CORE_API}")"
     MATCHER="${MATCHER//\\/}"
-    MATCHER="${MATCHER/?:/}"
-    MATCHER="${MATCHER/?)/)}"
+    MATCHER="${MATCHER//\?:/}"
+    MATCHER="${MATCHER//\?)/)}"
     if [[ ${ENDPOINT} =~ ${MATCHER} ]]; then
       METHOD="$(jq -r ".[${i}].method" "${LIQ_CORE_API}")"
-      curl -X ${METHOD} http://127.0.0.1:32600${ENDPOINT}
+      local PARAM QUERY PARAM_FLAG
+      if [[ "${PARAMETERS}" =~ =@ ]]; then
+        PARAM_FLAG="-F"
+      else
+        PARAM_FLAG="-d"
+      fi
+      for PARAM in ${PARAMETERS}; do
+        if [[ ${PARAM} =~ =@ ]]; then
+          local FILE="${PARAM#*=@}"
+          if ! [[ -f "${FILE}" ]]; then
+            echo "Could not find file '${FILE}' specified in parameter '${PARAM%%=@*}'; bailing out." >&2
+            exit 4
+          fi
+        fi
+        QUERY="${QUERY} ${PARAM_FLAG} ${PARAM}"
+      done
+      if [[ -n "${QUERY}" ]] && [[ "${METHOD}" != 'POST' ]]; then
+        QUERY="-G ${QUERY}"
+      fi
+      echo curl -X ${METHOD} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
+      curl -X ${METHOD} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
       return 0 # bash for 'success'
     fi
     i=$(( ${i} + 1 ))
