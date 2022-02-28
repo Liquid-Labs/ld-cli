@@ -19,6 +19,7 @@ export LIQ_EXTS_DB="${LIQ_DB}/exts"
 export LIQ_ENV_LOGS="${LIQ_DB}/logs"
 export LIQ_PLAYGROUND="${LIQ_DB}/playground"
 export LIQ_CACHE="${LIQ_DB}/cache"
+export LIQ_CORE_API="${LIQ_DB}/core-api.json"
 
 # TODO: we could generate this from the help docs... make the spec central!
 _liq() {
