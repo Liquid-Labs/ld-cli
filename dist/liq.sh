@@ -1421,6 +1421,7 @@ export LIQ_EXTS_DB="${LIQ_DB}/exts"
 export LIQ_ENV_LOGS="${LIQ_DB}/logs"
 export LIQ_PLAYGROUND="${LIQ_DB}/playground"
 export LIQ_CACHE="${LIQ_DB}/cache"
+export LIQ_CORE_API="${LIQ_DB}/core-api.json"
 
 # Really just a constant at this point, but at some point may allow override at org and project levels.
 export PRODUCTION_TAG=production
@@ -5355,6 +5356,8 @@ liq-dispatch() {
   if (( $# == 0 )); then
     echoerrandexit "No arguments provided. Try:\nliq help"
   fi
+  
+  liq-try-core "${*}" && return
 
   local GROUP ACTION
   # support for trailing 'help'
@@ -5394,6 +5397,32 @@ liq-dispatch() {
         exitUnknownHelpTopic "$ACTION" "$GROUP"
       fi;;
   esac
+}
+
+liq-try-core() {
+  local COMMAND="${1:-}"
+  local ENDPOINT="/${COMMAND// //}"
+  
+  if ! [[ -f ${LIQ_CORE_API} ]]; then return 1; fi
+  
+  local i ENDPOINT_COUNT
+  ENDPOINT_COUNT=$(jq '. | length' "${LIQ_CORE_API}")
+  i=0
+  while (( ${i} < ${ENDPOINT_COUNT} )); do
+    local MATCHER METHOD
+    MATCHER="$(jq -r ".[${i}].matcher" "${LIQ_CORE_API}")"
+    MATCHER="${MATCHER//\\/}"
+    MATCHER="${MATCHER/?:/}"
+    MATCHER="${MATCHER/?)/)}"
+    if [[ ${ENDPOINT} =~ ${MATCHER} ]]; then
+      METHOD="$(jq -r ".[${i}].method" "${LIQ_CORE_API}")"
+      curl -X ${METHOD} http://127.0.0.1:32600${ENDPOINT}
+      return 0 # bash for 'success'
+    fi
+    i=$(( ${i} + 1 ))
+  done
+  # no matches found
+  return 1
 }
 
 # process global overrides of the form 'key="value"'
