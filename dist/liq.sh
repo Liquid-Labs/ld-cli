@@ -5438,7 +5438,6 @@ liq-try-core() {
       if [[ -n "${QUERY}" ]] && [[ "${METHOD}" != 'POST' ]]; then
         QUERY="-G ${QUERY}"
       fi
-      echo curl -X ${METHOD} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
       curl -X ${METHOD} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
       return 0 # bash for 'success'
     fi

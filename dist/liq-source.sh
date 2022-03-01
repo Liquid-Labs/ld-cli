@@ -5413,8 +5413,8 @@ liq-try-core() {
     local MATCHER METHOD
     MATCHER="$(jq -r ".[${i}].matcher" "${LIQ_CORE_API}")"
     MATCHER="${MATCHER//\\/}"
-    MATCHER="${MATCHER/?:/}"
-    MATCHER="${MATCHER/?)/)}"
+    MATCHER="${MATCHER//\?:/}"
+    MATCHER="${MATCHER//\?)/)}"
     if [[ ${ENDPOINT} =~ ${MATCHER} ]]; then
       METHOD="$(jq -r ".[${i}].method" "${LIQ_CORE_API}")"
       local PARAM QUERY PARAM_FLAG
@@ -5431,7 +5431,7 @@ liq-try-core() {
             exit 4
           fi
         fi
-        QUERY="${QUERY} ${PARAM_FLAG} '${PARAM}'" # TODO: blacks ' in the values
+        QUERY="${QUERY} ${PARAM_FLAG} ${PARAM}"
       done
       if [[ -n "${QUERY}" ]] && [[ "${METHOD}" != 'POST' ]]; then
         QUERY="-G ${QUERY}"
