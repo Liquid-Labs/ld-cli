@@ -5402,22 +5402,24 @@ liq-dispatch() {
 liq-try-core() {
   local COMMAND="${1:-}"
   
-  local ENDPOINT="${COMMAND%%--*}"
+  local ENDPOINT="${COMMAND%%--*}" # strip everything from '--'
   ENDPOINT="/${ENDPOINT// //}"
-  local PARAMETERS="${COMMAND#*--}"
+  local PARAMETERS="${COMMAND#*--}" # keep everything after '--'
   
   if ! [[ -f ${LIQ_CORE_API} ]]; then return 1; fi
   
   local i ENDPOINT_COUNT
   ENDPOINT_COUNT=$(jq '. | length' "${LIQ_CORE_API}")
   i=0
+  # First, we test against known endpoints (as published in ~/.liq/core-api.json)
   while (( ${i} < ${ENDPOINT_COUNT} )); do
-    local MATCHER METHOD
+    local MATCHER METHOD HEADERS
     MATCHER="$(jq -r ".[${i}].matcher" "${LIQ_CORE_API}")"
     MATCHER="${MATCHER//\\/}"
     MATCHER="${MATCHER//\?:/}"
     MATCHER="${MATCHER//\?)/)}"
     if [[ ${ENDPOINT} =~ ${MATCHER} ]]; then
+      # If we get a match, then we extract the method used
       METHOD="$(jq -r ".[${i}].method" "${LIQ_CORE_API}")"
       local PARAM QUERY PARAM_FLAG
       if [[ "${PARAMETERS}" =~ =@ ]]; then
@@ -5426,19 +5428,37 @@ liq-try-core() {
         PARAM_FLAG="-d"
       fi
       for PARAM in ${PARAMETERS}; do
-        if [[ ${PARAM} =~ =@ ]]; then
-          local FILE="${PARAM#*=@}"
-          if ! [[ -f "${FILE}" ]]; then
-            echo "Could not find file '${FILE}' specified in parameter '${PARAM%%=@*}'; bailing out." >&2
-            exit 4
+        if [[ ${PARAM} == format=* ]]; then
+          local FORMAT="${PARAM#*=}"
+          # 'format' is controlled with the accept header
+          case "${FORMAT}" in
+            md|markdown)
+              FORMAT='text/markdown';;
+            */?json|*)
+              FORMAT='application/json';;
+          esac
+          HEADERS="-H \"Accept: ${FORMAT}\""
+        else
+          if [[ ${PARAM} =~ =@ ]]; then
+            local FILE="${PARAM#*=@}"
+            if ! [[ -f "${FILE}" ]]; then
+              echo "Could not find file '${FILE}' specified in parameter '${PARAM%%=@*}'; bailing out." >&2
+              exit 4
+            fi
           fi
+          QUERY="${QUERY} ${PARAM_FLAG} ${PARAM}"
         fi
-        QUERY="${QUERY} ${PARAM_FLAG} ${PARAM}"
       done
       if [[ -n "${QUERY}" ]] && [[ "${METHOD}" != 'POST' ]]; then
         QUERY="-G ${QUERY}"
       fi
-      curl -X ${METHOD} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
+      # TODO: unless we eval, the headers gets incorrectly parsed; I know this happens sometimes, but I'm not sure why;
+      # e.g.:
+      # curl -X GET -H "Accept: text/markdown" http://127.0.0.1:3260/
+      # is parsed such that it thinks 'text' is the host... We've tried different quotations and escaping spaces. So far
+      # nothing works.
+      eval curl -X ${METHOD} ${HEADERS} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
+      # curl -X ${METHOD} ${HEADERS} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
       return 0 # bash for 'success'
     fi
     i=$(( ${i} + 1 ))

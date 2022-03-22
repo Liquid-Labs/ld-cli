@@ -5410,7 +5410,7 @@ liq-try-core() {
   ENDPOINT_COUNT=$(jq '. | length' "${LIQ_CORE_API}")
   i=0
   while (( ${i} < ${ENDPOINT_COUNT} )); do
-    local MATCHER METHOD
+    local MATCHER METHOD HEADERS
     MATCHER="$(jq -r ".[${i}].matcher" "${LIQ_CORE_API}")"
     MATCHER="${MATCHER//\\/}"
     MATCHER="${MATCHER//\?:/}"
@@ -5424,19 +5424,32 @@ liq-try-core() {
         PARAM_FLAG="-d"
       fi
       for PARAM in ${PARAMETERS}; do
-        if [[ ${PARAM} =~ =@ ]]; then
-          local FILE="${PARAM#*=@}"
-          if ! [[ -f "${FILE}" ]]; then
-            echo "Could not find file '${FILE}' specified in parameter '${PARAM%%=@*}'; bailing out." >&2
-            exit 4
+        if [[ ${PARAM} == format=* ]]; then
+          local FORMAT="${PARAM#*=}"
+          # 'format' is controlled with the accept header
+          case "${FORMAT}" in
+            md|markdown)
+              FORMAT='text/markdown';;
+            */?json|*)
+              FORMAT='application/json';;
+          esac
+          HEADERS="-H 'Accepts: ${FORMAT}'"
+        else
+          if [[ ${PARAM} =~ =@ ]]; then
+            local FILE="${PARAM#*=@}"
+            if ! [[ -f "${FILE}" ]]; then
+              echo "Could not find file '${FILE}' specified in parameter '${PARAM%%=@*}'; bailing out." >&2
+              exit 4
+            fi
           fi
+          QUERY="${QUERY} ${PARAM_FLAG} ${PARAM}"
         fi
-        QUERY="${QUERY} ${PARAM_FLAG} ${PARAM}"
       done
       if [[ -n "${QUERY}" ]] && [[ "${METHOD}" != 'POST' ]]; then
         QUERY="-G ${QUERY}"
       fi
-      curl -X ${METHOD} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
+      echo curl -X ${METHOD} ${HEADERS} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
+      curl -X ${METHOD} ${HEADERS} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
       return 0 # bash for 'success'
     fi
     i=$(( ${i} + 1 ))
