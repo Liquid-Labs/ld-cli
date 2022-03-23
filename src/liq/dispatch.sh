@@ -73,6 +73,8 @@ liq-try-core() {
       else
         PARAM_FLAG="-d"
       fi
+      local REQUIRE_OUTPUT=0
+      local OUTPUT
       for PARAM in ${PARAMETERS}; do
         if [[ ${PARAM} == format=* ]]; then
           local FORMAT="${PARAM#*=}"
@@ -80,21 +82,38 @@ liq-try-core() {
           case "${FORMAT}" in
             md|markdown)
               FORMAT='text/markdown';;
-            */?json|*)
+            pdf)
+              FORMAT='application/pdf'
+              REQUIRE_OUTPUT=1;;
+            *) # */?json <- JSON is our default
               FORMAT='application/json';;
           esac
           HEADERS="-H \"Accept: ${FORMAT}\""
-        else
-          if [[ ${PARAM} =~ =@ ]]; then
-            local FILE="${PARAM#*=@}"
-            if ! [[ -f "${FILE}" ]]; then
-              echo "Could not find file '${FILE}' specified in parameter '${PARAM%%=@*}'; bailing out." >&2
-              exit 4
-            fi
+        elif [[ ${PARAM} =~ =@ ]]; then
+          local FILE="${PARAM#*=@}"
+          if ! [[ -f "${FILE}" ]]; then
+            echo "Could not find file '${FILE}' specified in parameter '${PARAM%%=@*}'; bailing out." >&2
+            exit 4
           fi
+        elif [[ "${PARAM}" == output* ]]; then
+          if [[ "${PARAM}" == output=* ]]; then
+            OUTPUT="--output ${PARAM#*=}"
+            echo "YEAH... ${OUTPUT} ${PARAM} ${PARAM#*=} ${PARAM%*=}" >&2
+                        PARAM=''
+          elif [[ "${PARAM}" == "output" ]]; then
+            OUTPUT="--remote-name --remote-header-name"
+            PARAM=''
+          fi # else, the parameter is something like 'outputPath' and we just pass it thru
+        fi
+        if [[ -n "${PARAM}" ]]; then
           QUERY="${QUERY} ${PARAM_FLAG} ${PARAM}"
         fi
-      done
+      done # end parameter processing
+      # TODO: derive this kind of thing from the core API spec; for now we just handle as a one-off
+      if (( ${REQUIRE_OUTPUT} == 1 )) && [[ -z "${OUTPUT}" ]]; then
+        # then we use the 'Content-disposition'
+        OUTPUT='--remote-name --remote-header-name'
+      fi
       if [[ -n "${QUERY}" ]] && [[ "${METHOD}" != 'POST' ]]; then
         QUERY="-G ${QUERY}"
       fi
@@ -103,7 +122,7 @@ liq-try-core() {
       # curl -X GET -H "Accept: text/markdown" http://127.0.0.1:3260/
       # is parsed such that it thinks 'text' is the host... We've tried different quotations and escaping spaces. So far
       # nothing works.
-      eval curl -X ${METHOD} ${HEADERS} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
+      eval curl -X ${METHOD} ${HEADERS} ${OUTPUT} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
       # curl -X ${METHOD} ${HEADERS} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
       return 0 # bash for 'success'
     fi
