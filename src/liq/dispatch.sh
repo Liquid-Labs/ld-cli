@@ -85,6 +85,9 @@ liq-try-core() {
             pdf)
               FORMAT='application/pdf'
               REQUIRE_OUTPUT=1;;
+            docx)
+              FORMAT='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+              REQUIRE_OUTPUT=1;;
             *) # */?json <- JSON is our default
               FORMAT='application/json';;
           esac
