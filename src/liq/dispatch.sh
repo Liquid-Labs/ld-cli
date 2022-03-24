@@ -110,9 +110,10 @@ liq-try-core() {
             OUTPUT="--remote-name --remote-header-name"
             PARAM=''
           fi # else, the parameter is something like 'outputPath' and we just pass it thru
-        else # it's a bare 'boolean' flag, but we need to give it a value
+        elif [[ "${PARAM}" != *=* ]]; then # it's a bare 'boolean' flag, but we need to give it a value
           PARAM="${PARAM}=true"
         fi
+        
         if [[ -n "${PARAM}" ]]; then
           QUERY="${QUERY} ${PARAM_FLAG} ${PARAM}"
         fi
@@ -130,6 +131,7 @@ liq-try-core() {
       # curl -X GET -H "Accept: text/markdown" http://127.0.0.1:3260/
       # is parsed such that it thinks 'text' is the host... We've tried different quotations and escaping spaces. So far
       # nothing works.
+      echo curl -X ${METHOD} ${HEADERS} ${OUTPUT} http://127.0.0.1:32600${ENDPOINT} ${QUERY} # DEBUG
       eval curl -X ${METHOD} ${HEADERS} ${OUTPUT} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
       # curl -X ${METHOD} ${HEADERS} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
       return 0 # bash for 'success'
