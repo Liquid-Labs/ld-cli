@@ -82,6 +82,10 @@ liq-try-core() {
           case "${FORMAT}" in
             md|markdown)
               FORMAT='text/markdown';;
+            csv)
+              FORMAT='text/csv';;
+            tsv)
+              FORMAT='text/tab-separated-values';;
             pdf)
               FORMAT='application/pdf'
               REQUIRE_OUTPUT=1;;
@@ -101,12 +105,13 @@ liq-try-core() {
         elif [[ "${PARAM}" == output* ]]; then
           if [[ "${PARAM}" == output=* ]]; then
             OUTPUT="--output ${PARAM#*=}"
-            echo "YEAH... ${OUTPUT} ${PARAM} ${PARAM#*=} ${PARAM%*=}" >&2
-                        PARAM=''
+            PARAM=''
           elif [[ "${PARAM}" == "output" ]]; then
             OUTPUT="--remote-name --remote-header-name"
             PARAM=''
           fi # else, the parameter is something like 'outputPath' and we just pass it thru
+        else # it's a bare 'boolean' flag, but we need to give it a value
+          PARAM="${PARAM}=true"
         fi
         if [[ -n "${PARAM}" ]]; then
           QUERY="${QUERY} ${PARAM_FLAG} ${PARAM}"
