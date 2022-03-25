@@ -131,7 +131,6 @@ liq-try-core() {
       # curl -X GET -H "Accept: text/markdown" http://127.0.0.1:3260/
       # is parsed such that it thinks 'text' is the host... We've tried different quotations and escaping spaces. So far
       # nothing works.
-      echo curl -X ${METHOD} ${HEADERS} ${OUTPUT} http://127.0.0.1:32600${ENDPOINT} ${QUERY} # DEBUG
       eval curl -X ${METHOD} ${HEADERS} ${OUTPUT} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
       # curl -X ${METHOD} ${HEADERS} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
       return 0 # bash for 'success'
