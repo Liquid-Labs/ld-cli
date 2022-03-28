@@ -128,7 +128,7 @@ liq-try-core() {
         fi
       done # end parameter processing
       # TODO: derive this kind of thing from the core API spec; for now we just handle as a one-off
-      if (( ${REQUIRE_OUTPUT} == 1 )) && [[ -z "${OUTPUT}" ]]; then
+      if (( ${REQUIRE_OUTPUT} == 1 )) && [[ -z "${OUTPUT}" ]] && [[ "${QUERY}" != *' outputPath='* ]]; then
         # then we use the 'Content-disposition'
         OUTPUT='--remote-name --remote-header-name'
       fi

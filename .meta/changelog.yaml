@@ -85,3 +85,22 @@
   securityNotes: []
   drpBcpNotes: []
   backoutNotes: []
+- startTimestamp: 2022-03-28T14:35:36.013Z
+  startEpochMillis: 1648478136013
+  issues:
+    - https://github.com/Liquid-Labs/liq-policy/issues/1
+  branch: 2022.03.28-zane@liquid-labs.com-closed_migrate_policy_compilation
+  branchFrom: 924f26a2243c9e50c923ede6193381d4a92f3352
+  workInitiator: zane@liquid-labs.com
+  branchInitiator: zane@liquid-labs.com
+  involvedProjects:
+    - "@liquid-labs/liq-policy"
+    - "@liquid-labs/liq-handlers-lib"
+    - "@liquid-labs/md2x"
+    - "@liquid-labs/liq-core"
+    - "@liquid-labs/liq-cli"
+  changeNotes:
+    - "[CLOSED] Migrate policy compilation and export here"
+  securityNotes: []
+  drpBcpNotes: []
+  backoutNotes: []
