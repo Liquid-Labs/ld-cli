@@ -52,6 +52,15 @@ liq-try-core() {
   ENDPOINT="/${ENDPOINT// //}"
   local PARAMETERS="${COMMAND#*--}" # keep everything after '--'
   
+  if [[ "${ENDPOINT}" == *'/./'* ]]; then
+    requirePackage
+    local ORG PKG
+    ORG=${PACKAGE_NAME#@}
+    ORG=${ORG%/*}
+    PKG=${PACKAGE_NAME#*/}
+    ENDPOINT="${ENDPOINT/./"${ORG}/${PKG}"}"
+  fi
+  
   if ! [[ -f ${LIQ_CORE_API} ]]; then return 1; fi
   
   local i ENDPOINT_COUNT
