@@ -50,7 +50,10 @@ liq-try-core() {
   
   local ENDPOINT="${COMMAND%%--*}" # strip everything from '--'
   ENDPOINT="/${ENDPOINT// //}"
-  local PARAMETERS="${COMMAND#*--}" # keep everything after '--'
+  local PARAMETERS
+  if [[ "${COMMAND}" == *' -- '* ]]; then
+    PARAMETERS="${COMMAND#*--}" # keep everything after '--'
+  fi
   
   if [[ "${ENDPOINT}" == *'/./'* ]]; then
     requirePackage
