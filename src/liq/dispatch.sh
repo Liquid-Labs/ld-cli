@@ -3,7 +3,7 @@ liq-dispatch() {
     echoerrandexit "No arguments provided. Try:\nliq help"
   fi
   
-  liq-try-core "${*}" && return
+  liq-try-core "${@}" && return
 
   local GROUP ACTION
   # support for trailing 'help'
@@ -45,15 +45,40 @@ liq-dispatch() {
   esac
 }
 
+# credit: https://gist.github.com/cdown/1163649
+urlencode() {
+    # urlencode <string>
+
+    old_lc_collate=${LC_COLLATE:-}
+    LC_COLLATE=C
+
+    local length="${#1}"
+    for (( i = 0; i < length; i++ )); do
+        local c="${1:$i:1}"
+        case $c in
+            [a-zA-Z0-9.~_-]) printf '%s' "$c" ;;
+            *) printf '%%%02X' "'$c" ;;
+        esac
+    done
+
+    LC_COLLATE=$old_lc_collate
+}
+
 liq-try-core() {
-  local COMMAND="${1:-}"
-  
-  local ENDPOINT="${COMMAND%%--*}" # strip everything from '--'
-  ENDPOINT="/${ENDPOINT// //}"
-  local PARAMETERS
-  if [[ "${COMMAND}" == *' -- '* ]]; then
-    PARAMETERS="${COMMAND#*--}" # keep everything after '--'
-  fi
+  # we read through command tokens, treating everything before '--' as part of the endpoint and everything after as a
+  # parameter
+  local ENDPOINT PARAMETERS
+  while (( $# > 0 )); do
+    if [[ -n "${PARAMETERS}" ]]; then
+      PARAMETERS="${PARAMETERS} ${1}"
+    elif [[ ${1} == '--' ]]; then
+      PARAMETERS="${2:-}"
+      shift
+    else
+      ENDPOINT="${ENDPOINT}/$(urlencode "$1")"
+    fi
+    shift
+  done
   
   if [[ "${ENDPOINT}" == *'/./'* ]]; then
     requirePackage
@@ -73,9 +98,13 @@ liq-try-core() {
   while (( ${i} < ${ENDPOINT_COUNT} )); do
     local MATCHER METHOD HEADERS
     MATCHER="$(jq -r ".[${i}].matcher" "${LIQ_CORE_API}")"
+    # remove unecessary escapin
     MATCHER="${MATCHER//\\/}"
+    # remove unsupported non-capture groups
     MATCHER="${MATCHER//\?:/}"
     MATCHER="${MATCHER//\?)/)}"
+    # remove unsupported named capture groups
+    MATCHER="${MATCHER//\?<*>/}"
     if [[ ${ENDPOINT} =~ ${MATCHER} ]]; then
       # If we get a match, then we extract the method used
       METHOD="$(jq -r ".[${i}].method" "${LIQ_CORE_API}")"
@@ -143,7 +172,7 @@ liq-try-core() {
       # curl -X GET -H "Accept: text/markdown" http://127.0.0.1:3260/
       # is parsed such that it thinks 'text' is the host... We've tried different quotations and escaping spaces. So far
       # nothing works.
-      eval curl -X ${METHOD} ${HEADERS} ${OUTPUT} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
+      eval curl --max-time 20 -X ${METHOD} ${HEADERS} ${OUTPUT} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
       # curl -X ${METHOD} ${HEADERS} http://127.0.0.1:32600${ENDPOINT} ${QUERY}
       return 0 # bash for 'success'
     fi
