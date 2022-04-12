@@ -45,8 +45,11 @@ liq-work-lib-changelog-print-entries-since() {
     --pretty=format:'{%n  "commit": "%H",%n  "author": {%n    "name": "%aN",%n     "email": "%aE"%n  },%n  "date": "%ad",%n  "message": "%s"%n},' \
     ${SINCE_VERSION}..HEAD \
     -- . ':!.meta/*' \
-    | perl -pe 'BEGIN{print "["}; END{print "]\n"}' | \
-    perl -pe 's/},]/}]/')
+    | perl -pe 'BEGIN{print "["}; END{print "]\n"}' \
+    | perl -pe 's/},]/}]/' \
+    | perl -pe 'while (/message": "([^"]|(?<=\\)")*(?<!\\)"[^"}]*"/) { s/(message": "(?:[^"]|(?<=\\)")*)"([^"]*")/${1}\\"$2/m; }')
+  # ^ The above adds [] around the report, making it a list of entries and the second removes the trailing ',' after
+  # the last entry and finally escapes '"'s within the 'message'
   local SINCE_DATE
   SINCE_DATE=$(git log -1 --format=%ci ${SINCE_VERSION})
   CHANGELOG_FILE="${LIQ_WORK_CHANGELOG_FILE}" node "${LIQ_DIST_DIR}/manage-changelog.js" print-entries "${HOTFIXES}" "${SINCE_DATE}"
