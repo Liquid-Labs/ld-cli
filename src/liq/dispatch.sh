@@ -98,13 +98,10 @@ liq-try-core() {
   while (( ${i} < ${ENDPOINT_COUNT} )); do
     local MATCHER METHOD HEADERS
     MATCHER="$(jq -r ".[${i}].matcher" "${LIQ_CORE_API}")"
-    # remove unecessary escapin
-    MATCHER="${MATCHER//\\/}"
-    # remove unsupported non-capture groups
-    MATCHER="${MATCHER//\?:/}"
-    MATCHER="${MATCHER//\?)/)}"
-    # remove unsupported named capture groups
-    MATCHER="${MATCHER//\?<*>/}"
+    MATCHER="${MATCHER//\\/}" # remove unecessary escaping
+    MATCHER="${MATCHER//\?:/}" # remove unsupported non-capture groups
+    MATCHER="${MATCHER//\?)/)}" # TODO: is this is alternate/optional syntax for non-capture groups? or what? See if it can be removed
+    MATCHER="${MATCHER//\?<*>/}" # remove unsupported named capture groups
     if [[ ${ENDPOINT} =~ ${MATCHER} ]]; then
       # If we get a match, then we extract the method used
       METHOD="$(jq -r ".[${i}].method" "${LIQ_CORE_API}")"
