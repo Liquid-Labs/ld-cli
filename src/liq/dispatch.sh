@@ -137,7 +137,7 @@ liq-try-core() {
         elif [[ ${PARAM} =~ =@ ]]; then
           local FILE="${PARAM#*=@}"
           if ! [[ -f "${FILE}" ]]; then
-            echo "Could not find file '${FILE}' specified in parameter '${PARAM%%=@*}'; bailing out." >&2
+            echo "Could not find local file '${FILE}' specified in parameter '${PARAM%%=@*}'; bailing out." >&2
             exit 4
           fi
         elif [[ "${PARAM}" == output* ]]; then
