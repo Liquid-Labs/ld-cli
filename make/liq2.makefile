@@ -10,7 +10,7 @@ $(LIQ2_JS): package.json $(LIQ2_FILES)
 	JS_SRC=$(LIQ2_SRC) $(CATALYST_SCRIPTS) build
 
 $(LIQ2_BIN): $(LIQ2_JS)
-	echo -e '#!/usr/bin/env node\n' > $@
+	echo -e '#!/usr/bin/env node --no-warnings\n' > $@
 	cat $< >> $@
 	chmod a+x $@
 
