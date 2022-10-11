@@ -1,8 +1,10 @@
+import { PORT, PROTOCOL, SERVER } from './constants'
+
 const methods = [ 'DELETE', 'GET', 'OPTIONS', 'POST', 'PUT', 'UNBIND' ]
 
 const processCommand = (args) => {
   const pathBits = []
-  const parameters = []
+  const data = []
   let setParams = false
 
   let method
@@ -20,7 +22,7 @@ const processCommand = (args) => {
     }
     else { // setup params
       const [ name, value = 'true' ] = arg.split(/\s*=\s*/)
-      parameters.push([ encodeURIComponent(name), encodeURIComponent(value) ])
+      data.push([ name, value ])
     }
   }
 
@@ -40,11 +42,16 @@ const processCommand = (args) => {
         method = 'get'
     }
   }
+  
+  const path = '/' + pathBits.join('/')
+  const query = method === 'post' ? '' : '?' + new URLSearchParams(data).toString()
+  const url = `${PROTOCOL}://${SERVER}:${PORT}${path}${query}`
 
   return [
     method,
-    '/' + pathBits.join('/'),
-    parameters
+    path,
+    data,
+    url
   ]
 }
 

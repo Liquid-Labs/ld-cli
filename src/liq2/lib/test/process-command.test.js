@@ -1,6 +1,7 @@
 /* global describe expect test */
 
 import { processCommand } from '../process-command'
+import { PORT, PROTOCOL, SERVER } from '../constants'
 
 describe('processCommand', () => {
   test.each([
@@ -20,12 +21,13 @@ describe('processCommand', () => {
   })
   
   test.each([
-    [ 'foo=1', [ 'foo', '1' ]],
-    [ 'bar=hey there', [ 'bar', 'hey%20there' ]],
-    [ 'baz', [ 'baz', 'true' ]]
+    [ [ 'foo=1' ], [[ 'foo', '1' ]]],
+    [ [ 'bar=hey there' ], [['bar', 'hey there' ]]],
+    [ [ 'baz' ], [[ 'baz', 'true' ]]],
+    [ [ 'foo=1', 'baz'], [['foo', '1'], ['baz', 'true' ]]]
   ])("parameter '%s' yields '%p'", (param, expectedData) => {
-    const [ , , data ] = processCommand(['foo', '--', param])
-    expect(data).toEqual([ expectedData ])
+    const [ , , data ] = processCommand(['foo', '--', ...param])
+    expect(data).toEqual(expectedData)
   })
   
   test.each([
@@ -38,5 +40,14 @@ describe('processCommand', () => {
   ])("path 'foo/%s' implies method '%s'", (pathBit, expectedMethod) => {
     const [ method, , ] = processCommand([ 'foo', pathBit ])
     expect(method).toBe(expectedMethod)
+  })
+  
+  test.each([
+    [ [ 'foo', 'create', '--', 'bar=1' ], '/foo/create' ],
+    [ [ 'foo', 'bar', '--', 'baz=1' ], '/foo/bar?baz=1'],
+    [ [ 'foo', 'bar', '--', 'baz=1', 'bobo' ], '/foo/bar?baz=1&bobo=true']
+  ])(`command '%p' yields url '${PROTOCOL}://${SERVER}:${PORT}%s'`, (commands, expectedPath) => {
+    const [ ,,, url ] = processCommand(commands)
+    expect(url).toBe(`${PROTOCOL}://${SERVER}:${PORT}${expectedPath}`)
   })
 })
