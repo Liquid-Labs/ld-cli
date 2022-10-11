@@ -4,7 +4,7 @@
   "description": "A process aware development, testing, and deployment management tool.",
   "main": "dist/liq2.js",
   "bin": {
-    "liq2": "dist/liq2.js",
+    "liq2": "dist/liq2",
     "liq": "dist/liq.sh",
     "liq-shell": "dist/liq-shell.sh"
   },

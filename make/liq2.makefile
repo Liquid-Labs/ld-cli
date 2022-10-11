@@ -9,10 +9,12 @@ BUILD_FILES:=$(BUILD_FILES) $(LIQ2_BIN)
 $(LIQ2_JS): package.json $(LIQ2_FILES)
 	JS_SRC=$(LIQ2_SRC) $(CATALYST_SCRIPTS) build
 
-$(LIQ2_BIN): $(LIQ2_JS)
-	echo -e '#!/usr/bin/env node --no-warnings\n' > $@
-	cat $< >> $@
-	chmod a+x $@
+$(LIQ2_BIN):
+	@echo -n "Writing bash wrapper... "
+	@echo '#!/usr/bin/env sh' > $@
+	@echo "/usr/bin/env node --no-warnings '$$(dirname "$$0")/liq2.js'" >> $@
+	@echo "done."
+	chmod a+x "$@"
 
 $(LIQ2_TEST_BUILT_FILES) &: $(LIQ2_TEST_SRC_FILES)
 	JS_SRC=$(LIQ2_SRC) $(CATALYST_SCRIPTS) pretest
