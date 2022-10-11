@@ -3,11 +3,12 @@ import { PORT, PROTOCOL, SERVER } from './constants'
 const methods = [ 'DELETE', 'GET', 'OPTIONS', 'POST', 'PUT', 'UNBIND' ]
 
 const processCommand = (args) => {
+  let method
   const pathBits = []
   const data = []
+  let accept = 'application/json'
   let setParams = false
-
-  let method
+  
   if (methods.includes(args[0])) {
     method = args[0].toLowerCase()
     args.shift()
@@ -22,7 +23,26 @@ const processCommand = (args) => {
     }
     else { // setup params
       const [ name, value = 'true' ] = arg.split(/\s*=\s*/)
-      data.push([ name, value ])
+      if (name === 'format') {
+        switch (value) {
+          case 'md':
+          case 'markdown':
+            accept='text/markdown'; break
+          case 'csv':
+            accept='text/csv'; break
+          case 'tsv':
+            accept='text/tab-separated-values'; break
+          case 'pdf':
+            accept='application/pdf'
+          case 'docx':
+            accept='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+          default:
+            accept='application/json'
+        }
+      }
+      else {
+        data.push([ name, value ])
+      }
     }
   }
 
@@ -44,14 +64,15 @@ const processCommand = (args) => {
   }
   
   const path = '/' + pathBits.join('/')
-  const query = method === 'post' ? '' : '?' + new URLSearchParams(data).toString()
+  const query = data.length > 0 && method !== 'post' ? '?' + new URLSearchParams(data).toString() : ''
   const url = `${PROTOCOL}://${SERVER}:${PORT}${path}${query}`
 
   return {
+    accept,
     method,
     path,
     data,
-    url
+    url,
   }
 }
 
