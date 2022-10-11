@@ -1,2 +1,2 @@
 export * from './constants'
-export * from './process-commands'
+export * from './process-command'
