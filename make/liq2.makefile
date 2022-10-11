@@ -12,7 +12,7 @@ $(LIQ2_JS): package.json $(LIQ2_FILES)
 $(LIQ2_BIN):
 	@echo -n "Writing bash wrapper... "
 	@echo '#!/usr/bin/env sh' > $@
-	@echo "/usr/bin/env node --no-warnings '$$(dirname "$$0")/liq2.js'" >> $@
+	@SCRIPT_DIR="$${PWD}/dist" && echo "/usr/bin/env node --no-warnings '$${SCRIPT_DIR}/liq2.js'" '"$$@"' >> $@
 	@echo "done."
 	chmod a+x "$@"
 
