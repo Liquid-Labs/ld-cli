@@ -2,9 +2,9 @@
   "name": "@liquid-labs/liq-cli",
   "version": "1.0.0-prototype.18",
   "description": "A process aware development, testing, and deployment management tool.",
-  "main": "dist/index.js",
-  "module": "dist/index.es.js",
+  "main": "dist/liq2.js",
   "bin": {
+    "liq2": "dist/liq2.js",
     "liq": "dist/liq.sh",
     "liq-shell": "dist/liq-shell.sh"
   },

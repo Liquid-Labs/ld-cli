@@ -1,24 +1,29 @@
 .DELETE_ON_ERROR:
 
+default: all
+
+SHELL:=/bin/bash
+
 STAGING:=.build
 NPM_BIN:=$(shell npm bin)
 BASH_ROLLUP:=$(NPM_BIN)/bash-rollup
 CATALYST_SCRIPTS:=$(NPM_BIN)/catalyst-scripts
+
+include make/*.makefile
+
 PKG_FILES:=package.json package-lock.json
 LIQ_SRC:=$(shell find src/liq -name "*.sh" -not -name "cli.sh")
 TEST_SRC:=$(shell find src/test -name "*.bats")
 LIB_CHANGELOG_SRC:=src/liq/actions/work/changelog/index.js $(shell find src/liq/actions/work/changelog/ -name "*.js" -not -name "index.js")
 DIST_CHANGELOG_JS:=dist/manage-changelog.js
-DIST_FILES:=dist/completion.sh dist/install.sh dist/liq.sh dist/liq-shell.sh dist/liq-source.sh $(DIST_CHANGELOG_JS)
+BUILD_FILES:=$(BUILD_FILES) dist/completion.sh dist/install.sh dist/liq.sh dist/liq-shell.sh dist/liq-source.sh $(DIST_CHANGELOG_JS)
 
-all: $(DIST_FILES)
+all: $(BUILD_FILES)
 
 clean:
 	rm -f liquid-labs-liq-cli-*.tgz
 	rm -f dist/*
 	rm -f npmrc.tmp
-
-.PHONY: all test clean docker-build docker-run docker-debug docker-debug-root docker-publish
 
 dist/completion.sh: src/completion/completion.sh $(PKG_FILES)
 	mkdir -p dist
@@ -46,7 +51,7 @@ $(DIST_CHANGELOG_JS): $(LIB_CHANGELOG_SRC)
 .ver-cache: package.json
 	cat $< | jq -r .version > $@
 
-.docker-distro-img-marker: $(DIST_FILES) src/docker/Dockerfile .ver-cache
+.docker-distro-img-marker: $(BUILD_FILES) src/docker/Dockerfile .ver-cache
 	@# TODO: Do a version marker with the image pull so we can tell whether we need to go through a whole rebuild or not.
 	docker pull ubuntu:latest
 	npm pack
@@ -94,7 +99,9 @@ test-js:
 	JS_SRC=./src/liq $(CATALYST_SCRIPTS) pretest
 	$(CATALYST_SCRIPTS) test
 
-test: test-js test-shell
+TESTS:=$(TESTS) test-js test-shell
+
+test: $(TESTS)
 
 DOCKER_DEBUG_CMD_BASE:=docker run --interactive --tty --mount type=bind,source="$${PWD}/docker-tmp",target=/home/liq/docker-tmp --entrypoint /bin/bash
 docker-debug: .docker-test-img-marker
@@ -108,3 +115,8 @@ docker-debug-root: .docker-test-img-marker
 docker-publish:
 	@cat "$${HOME}/.docker/config.json" | jq '.auths["https://index.docker.io/v1/"]' | grep -q '{}' || { echo -e "It does not appear that you're logged into docker.io. Try:\ndocker login --username=<your user name>"; exit 1; }
 	@echo "Login confirmed..."
+
+# dependency-graph:
+# 	make -Bnd test-cli | make2graph | dot -Tpng -o out.png
+
+.PHONY: all test clean docker-build docker-run docker-debug docker-debug-root docker-publish dependency-graph $(TESTS)
