@@ -10,12 +10,12 @@ describe('processCommand', () => {
     [ [ 'foo',  'bar' ], '/foo/bar' ],
     [ [ 'foo bar', 'baz' ], '/foo%20bar/baz' ]
   ])("command '%s' yields path '%s'", (command, expectedPath) => {
-    const [ , path, ] = processCommand(command)
+    const { path } = processCommand(command)
     expect(path).toEqual(expectedPath)
   })
   
   test('processes leading method', () => {
-    const [ method, path, ] = processCommand([ 'POST', 'foo', 'bar' ])
+    const { method, path } = processCommand([ 'POST', 'foo', 'bar' ])
     expect(method).toBe('post')
     expect(path).toBe('/foo/bar')
   })
@@ -26,7 +26,7 @@ describe('processCommand', () => {
     [ [ 'baz' ], [[ 'baz', 'true' ]]],
     [ [ 'foo=1', 'baz'], [['foo', '1'], ['baz', 'true' ]]]
   ])("parameter '%s' yields '%p'", (param, expectedData) => {
-    const [ , , data ] = processCommand(['foo', '--', ...param])
+    const { data } = processCommand(['foo', '--', ...param])
     expect(data).toEqual(expectedData)
   })
   
@@ -38,7 +38,7 @@ describe('processCommand', () => {
     [ 'quit', 'unbind' ],
     [ 'foo', 'get' ]
   ])("path 'foo/%s' implies method '%s'", (pathBit, expectedMethod) => {
-    const [ method, , ] = processCommand([ 'foo', pathBit ])
+    const { method } = processCommand([ 'foo', pathBit ])
     expect(method).toBe(expectedMethod)
   })
   
@@ -47,7 +47,7 @@ describe('processCommand', () => {
     [ [ 'foo', 'bar', '--', 'baz=1' ], '/foo/bar?baz=1'],
     [ [ 'foo', 'bar', '--', 'baz=1', 'bobo' ], '/foo/bar?baz=1&bobo=true']
   ])(`command '%p' yields url '${PROTOCOL}://${SERVER}:${PORT}%s'`, (commands, expectedPath) => {
-    const [ ,,, url ] = processCommand(commands)
+    const { url } = processCommand(commands)
     expect(url).toBe(`${PROTOCOL}://${SERVER}:${PORT}${expectedPath}`)
   })
 })

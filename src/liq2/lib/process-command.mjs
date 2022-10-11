@@ -47,12 +47,12 @@ const processCommand = (args) => {
   const query = method === 'post' ? '' : '?' + new URLSearchParams(data).toString()
   const url = `${PROTOCOL}://${SERVER}:${PORT}${path}${query}`
 
-  return [
+  return {
     method,
     path,
     data,
     url
-  ]
+  }
 }
 
 export { processCommand }
