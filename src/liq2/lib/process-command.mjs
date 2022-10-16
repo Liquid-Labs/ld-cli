@@ -15,14 +15,15 @@ const processCommand = (args) => {
   }
 
   for (const arg of args) {
-    if (arg === '--') {
+    if (arg === '--' && setParams === false) {
       setParams = true
     }
     else if (!setParams === true) {
       pathBits.push(encodeURIComponent(arg))
     }
     else { // setup params
-      const [ name, value = 'true' ] = arg.split(/\s*=\s*/)
+      let [ name, value = 'true', ...moreValue ] = arg.split(/\s*=\s*/)
+      value = value + moreValue.join('')
       if (name === 'format') {
         switch (value) {
           case 'md':
@@ -57,6 +58,7 @@ const processCommand = (args) => {
       case 'update':
         method = 'put'; break
       case 'quit':
+      case 'stop':
         method = 'unbind'; break
       default:
         method = 'get'
