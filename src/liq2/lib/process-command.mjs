@@ -6,7 +6,7 @@ const processCommand = (args) => {
   let method
   const pathBits = []
   const data = []
-  let accept = 'application/json'
+  let accept = 'text/plain, application/json;q=0.5'
   let setParams = false
   
   if (methods.includes(args[0])) {
