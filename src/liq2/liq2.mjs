@@ -11,7 +11,8 @@ const { accept, method, path, data, url } = processCommand(args);
   const response = await fetch(url, {
     headers: {
       'Accept': accept
-    }
+    },
+    method
   })
   const contentType = response.headers.get('Content-Type')
   const disposition = response.headers.get('Content-Disposition')
@@ -24,6 +25,7 @@ const { accept, method, path, data, url } = processCommand(args);
     }
     
     await fs.writeFile(outputFileName, (await response.blob()).stream())
+    console.log(`Saved '${contentType}' file '${outputFileName}'.`)
   }
   else { // output to screen
     if (contentType.startsWith('application/json')) {

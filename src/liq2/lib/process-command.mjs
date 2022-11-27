@@ -50,18 +50,21 @@ const processCommand = (args) => {
   if (method === undefined) {
     switch (pathBits[pathBits.length - 1]) {
       case 'create':
-        method = 'post'; break
+        method = 'POST'; break
       case 'delete':
-        method = 'delete'; break
+        method = 'DELETE'; break
       case 'options':
-        method = 'options'; break
+        method = 'OPTIONS'; break
+      case 'build':
+      case 'publish':
+      case 'refresh':
       case 'update':
-        method = 'put'; break
+        method = 'PUT'; break
       case 'quit':
       case 'stop':
-        method = 'unbind'; break
+        method = 'UNBIND'; break
       default:
-        method = 'get'
+        method = 'GET'
     }
   }
   
