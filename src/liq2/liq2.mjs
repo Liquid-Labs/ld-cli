@@ -21,7 +21,7 @@ const { accept, method, path, data, url } = processCommand(args);
     const [ , fileNameBit ] = disposition.split(/;\s*/)
     if (fileNameBit.startsWith('filename=')) {
       const [ , rawFileName ] = fileNameBit.split(/=\s*/)
-      outputFileName = sysPath.basename(rawFileName)
+      outputFileName = sysPath.basename(rawFileName.replace(/^['"]/, '').replace(/['"]$/, ''))
     }
     
     await fs.writeFile(outputFileName, (await response.blob()).stream())
