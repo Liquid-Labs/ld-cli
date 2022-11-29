@@ -34,12 +34,13 @@ const processCommand = (args) => {
           case 'tsv':
             accept='text/tab-separated-values'; break
           case 'pdf':
-            accept='application/pdf'
+            accept='application/pdf'; break
           case 'docx':
-            accept='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            accept='application/vnd.openxmlformats-officedocument.wordprocessingml.document'; break
           default:
             accept='application/json'
         }
+        data.push([ name, value ]) // everything should work with our without this
       }
       else {
         data.push([ name, value ])
