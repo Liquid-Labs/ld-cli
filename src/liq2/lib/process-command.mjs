@@ -40,9 +40,11 @@ const processCommand = (args) => {
           default:
             accept='application/json'
         }
-        data.push([ name, value ]) // everything should work with our without this
+        if (!args.includes('sendAcceptOnly')) {
+          data.push([ name, value ]) // everything should work with our without this
+        }
       }
-      else {
+      else if (name !== 'sendAcceptOnly') {
         data.push([ name, value ])
       }
     }
