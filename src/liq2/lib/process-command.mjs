@@ -55,10 +55,11 @@ const processCommand = (args) => {
         method = 'DELETE'; break
       case 'options':
         method = 'OPTIONS'; break
+      case 'update':
+        method = 'PATCH'; break
       case 'build':
       case 'publish':
       case 'refresh':
-      case 'update':
         method = 'PUT'; break
       case 'quit':
       case 'stop':
