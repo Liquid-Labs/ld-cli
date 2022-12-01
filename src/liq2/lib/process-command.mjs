@@ -18,12 +18,12 @@ const processCommand = (args) => {
     if (arg === '--' && setParams === false) {
       setParams = true
     }
-    else if (!setParams === true) {
+    else if (setParams !== true) {
       pathBits.push(encodeURIComponent(arg))
     }
     else { // setup params
       let [ name, value = 'true', ...moreValue ] = arg.split(/\s*=\s*/)
-      value = value + moreValue.join('')
+      value = [value, ...moreValue].join('=')
       if (name === 'format') {
         switch (value) {
           case 'md':
@@ -40,6 +40,8 @@ const processCommand = (args) => {
           default:
             accept='application/json'
         }
+        // 'sendAcceptOnly' is a 'secret' parameter that supresses the default behavior of sending the 'format' as a URL
+        // query param and instead only sends the 'Accept' headers (usually it does both).
         if (!args.includes('sendAcceptOnly')) {
           data.push([ name, value ]) // everything should work with our without this
         }
@@ -73,6 +75,7 @@ const processCommand = (args) => {
   }
   
   const path = '/' + pathBits.join('/')
+  
   const query = data.length > 0 && method !== 'post' ? '?' + new URLSearchParams(data).toString() : ''
   const url = `${PROTOCOL}://${SERVER}:${PORT}${path}${query}`
 
