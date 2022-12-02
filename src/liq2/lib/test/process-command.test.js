@@ -31,12 +31,12 @@ describe('processCommand', () => {
   })
   
   test.each([
-    [ 'create', 'post' ],
-    [ 'delete', 'delete' ],
-    [ 'options', 'options' ],
-    [ 'update', 'put' ],
-    [ 'quit', 'unbind' ],
-    [ 'foo', 'get' ]
+    [ 'create', 'POST' ],
+    [ 'delete', 'DELETE' ],
+    [ 'options', 'OPTIONS' ],
+    [ 'update', 'PUT' ],
+    [ 'quit', 'UNBIND' ],
+    [ 'foo', 'GET' ]
   ])("path 'foo/%s' implies method '%s'", (pathBit, expectedMethod) => {
     const { method } = processCommand([ 'foo', pathBit ])
     expect(method).toBe(expectedMethod)
