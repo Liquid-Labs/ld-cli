@@ -26,6 +26,10 @@ const processCommand = (args) => {
       value = [value, ...moreValue].join('=')
       if (name === 'format') {
         switch (value) {
+          case 'txt':
+            accept='text/plain'; break
+          case 'terminal':
+            accept='text/terminal'; break
           case 'md':
           case 'markdown':
             accept='text/markdown'; break

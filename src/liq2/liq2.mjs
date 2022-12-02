@@ -1,7 +1,7 @@
 import * as fs from 'node:fs/promises'
 import * as sysPath from 'node:path'
 
-import { processCommand } from './lib'
+import { formatTerminalText, processCommand } from './lib'
 
 const args = process.argv.slice(2)
 
@@ -30,6 +30,10 @@ const { accept, method, path, data, url } = processCommand(args);
   else { // output to screen
     if (contentType.startsWith('application/json')) {
       console.log(JSON.stringify(await response.json(), null, '  '))
+    }
+    else if (contentType.startsWith('text/terminal')) {
+      const tText = await response.text()
+      console.log(formatTerminalText(tText))
     }
     else {
       console.log(await response.text())
