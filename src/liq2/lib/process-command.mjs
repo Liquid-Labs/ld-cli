@@ -48,11 +48,7 @@ const processCommand = (args) => {
       value = [value, ...moreValue].join('=')
       if (name === 'format') {
         accept = extToMime(value)
-        // 'sendFormParam' is a 'secret' parameter that changes the default behavior of suppressing 'format' as a URL
-        // query param (and only sends the 'Accept' headers); if true, then it will do both.
-        if (args.includes('sendFormParam')) {
-          data.push([ name, value ]) // everything should work with our without this
-        }
+        data.push([ name, value ]) // everything should work with our without this
       }
       else if (name !== 'sendFormParam') {
         data.push([ name, value ])
