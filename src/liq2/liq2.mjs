@@ -12,6 +12,7 @@ const { fetchOpts, url } = processCommand(args);
   const response = await fetch(url, fetchOpts)
   const contentType = response.headers.get('Content-Type')
   const disposition = response.headers.get('Content-Disposition')
+  const status = response.status
   if (disposition?.startsWith('attachment')) { // save the file
     let outputFileName = 'output'
     const [ , fileNameBit ] = disposition.split(/;\s*/)
@@ -27,12 +28,12 @@ const { fetchOpts, url } = processCommand(args);
     if (contentType.startsWith('application/json')) {
       console.log(JSON.stringify(await response.json(), null, '  '))
     }
-    else if (contentType.startsWith('text/terminal')) {
-      const tText = await response.text()
-      console.log(formatTerminalText(tText))
-    }
     else {
-      console.log(await response.text())
+      if (status >= 400) {
+        const errorSource = status < 500 ? 'Client' : 'Server'
+        console.log(formatTerminalText(`<error>${errorSource} ${status}: ${response.statusText}'<rst>'`))
+      }
+      console.log(formatTerminalText(await response.text()))
     }
   }
 })()

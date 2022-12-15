@@ -12,11 +12,15 @@ const tCodes = {
   blink : "\x1b[5m",
   reverse : "\x1b[7m",
   hidden : "\x1b[8m",
+  // semantic formatting
+  error: "\x1b[91m", // bright red
+  warning: "\x1b[93m", // bright yellow/gold
   // standard foreground colors
   black : "\x1b[30m",
   red : "\x1b[31m",
   green : "\x1b[32m",
   yellow : "\x1b[33m", // more of a gold, but we'll stick with the traditional names
+  gold : "\x1b[33m",
   blue : "\x1b[34m",
   magenta : "\x1b[35m",
   cyan : "\x1b[36m",
@@ -34,6 +38,7 @@ const tCodes = {
   darkGrey : "\x1b[90m", // 'bright black == dark grey'
   bRed : "\x1b[91m",
   bGreen: "\x1b[92m",
+  bYellow: "\x1b[93m",
   bGold: "\x1b[93m", // == 38;5;11m
   bBlue: "\x1b[94m",
   bMagenta: "\x1b[95m",
