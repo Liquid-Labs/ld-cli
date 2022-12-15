@@ -25,14 +25,14 @@ const { fetchOpts, url } = processCommand(args);
     console.log(`Saved '${contentType}' file '${outputFileName}'.`)
   }
   else { // output to screen
+    if (status >= 400) {
+      const errorSource = status < 500 ? 'Client' : 'Server'
+      console.error(formatTerminalText(`<error>${errorSource} error ${status}: ${response.statusText}<rst>`))
+    }
     if (contentType.startsWith('application/json')) {
       console.log(JSON.stringify(await response.json(), null, '  '))
     }
     else {
-      if (status >= 400) {
-        const errorSource = status < 500 ? 'Client' : 'Server'
-        console.log(formatTerminalText(`<error>${errorSource} ${status}: ${response.statusText}'<rst>'`))
-      }
       console.log(formatTerminalText(await response.text()))
     }
   }
