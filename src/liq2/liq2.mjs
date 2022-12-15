@@ -5,15 +5,11 @@ import { formatTerminalText, processCommand } from './lib'
 
 const args = process.argv.slice(2)
 
-const { accept, method, path, data, url } = processCommand(args);
+// const { accept, method, path, data, url } = processCommand(args)
+const { fetchOpts, url } = processCommand(args);
 
 (async () => {
-  const response = await fetch(url, {
-    headers: {
-      'Accept': accept
-    },
-    method
-  })
+  const response = await fetch(url, fetchOpts)
   const contentType = response.headers.get('Content-Type')
   const disposition = response.headers.get('Content-Disposition')
   if (disposition?.startsWith('attachment')) { // save the file

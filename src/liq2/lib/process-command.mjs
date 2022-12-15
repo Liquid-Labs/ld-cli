@@ -80,14 +80,27 @@ const processCommand = (args) => {
   
   const path = '/' + pathBits.join('/')
   
-  const query = data.length > 0 && method !== 'post' ? '?' + new URLSearchParams(data).toString() : ''
+  const query = data.length > 0 && method !== 'POST' ? '?' + new URLSearchParams(data).toString() : ''
   const url = `${PROTOCOL}://${SERVER}:${PORT}${path}${query}`
 
+  const fetchOpts = {
+    headers: {
+      'Accept': accept
+    },
+    method
+  }
+
+  if (method === 'POST') {
+    fetchOpts.headers['Content-Type'] = 'application/json'
+    const indexdData = data.reduce((acc, d) => {
+      acc[d[0]] = d[1]
+      return acc
+    }, {})
+    fetchOpts.body = JSON.stringify(indexdData)
+  }
+
   return {
-    accept,
-    method,
-    path,
-    data,
+    fetchOpts,
     url,
   }
 }
