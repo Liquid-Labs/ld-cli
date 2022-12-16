@@ -1,3 +1,5 @@
+import * as fs from 'node:fs/promises'
+
 import { PORT, PROTOCOL, SERVER } from './constants'
 
 const methods = [ 'DELETE', 'GET', 'OPTIONS', 'POST', 'PUT', 'UNBIND' ]
@@ -24,7 +26,7 @@ const extToMime = (value) => {
   }
 }
 
-const processCommand = (args) => {
+const processCommand = async (args) => {
   let method
   const pathBits = []
   const data = []
@@ -56,29 +58,14 @@ const processCommand = (args) => {
     }
   }
 
-  if (method === undefined) {
-    switch (pathBits[pathBits.length - 1]) {
-      case 'create':
-        method = 'POST'; break
-      case 'delete':
-        method = 'DELETE'; break
-      case 'options':
-        method = 'OPTIONS'; break
-      case 'update':
-        method = 'PATCH'; break
-      case 'build':
-      case 'publish':
-      case 'refresh':
-        method = 'PUT'; break
-      case 'quit':
-      case 'stop':
-        method = 'UNBIND'; break
-      default:
-        method = 'GET'
-    }
-  }
-  
   const path = '/' + pathBits.join('/')
+
+  if (method === undefined) {
+    const api = JSON.parse(await fs.readFile(process.env.HOME + '/.liq/core-api.json'))
+    const endpointSpec = api.find((s) => path.match(new RegExp(s.matcher)))
+
+    method = endpointSpec.method
+  }
   
   const query = data.length > 0 && method !== 'POST' ? '?' + new URLSearchParams(data).toString() : ''
   const url = `${PROTOCOL}://${SERVER}:${PORT}${path}${query}`

@@ -9,13 +9,13 @@ describe('processCommand', () => {
     [ [ 'foo' ], '/foo' ],
     [ [ 'foo',  'bar' ], '/foo/bar' ],
     [ [ 'foo bar', 'baz' ], '/foo%20bar/baz' ]
-  ])("command '%s' yields path '%s'", (command, expectedPath) => {
-    const { path } = processCommand(command)
+  ])("command '%s' yields path '%s'", async (command, expectedPath) => {
+    const { path } = await processCommand(command)
     expect(path).toEqual(expectedPath)
   })
   
-  test('processes leading method', () => {
-    const { method, path } = processCommand([ 'POST', 'foo', 'bar' ])
+  test('processes leading method', async () => {
+    const { method, path } = await processCommand([ 'POST', 'foo', 'bar' ])
     expect(method).toBe('post')
     expect(path).toBe('/foo/bar')
   })
@@ -25,8 +25,8 @@ describe('processCommand', () => {
     [ [ 'bar=hey there' ], [['bar', 'hey there' ]]],
     [ [ 'baz' ], [[ 'baz', 'true' ]]],
     [ [ 'foo=1', 'baz'], [['foo', '1'], ['baz', 'true' ]]]
-  ])("parameter '%s' yields '%p'", (param, expectedData) => {
-    const { data } = processCommand(['foo', '--', ...param])
+  ])("parameter '%s' yields '%p'", async (param, expectedData) => {
+    const { data } = await processCommand(['foo', '--', ...param])
     expect(data).toEqual(expectedData)
   })
   
@@ -37,8 +37,8 @@ describe('processCommand', () => {
     [ 'update', 'PUT' ],
     [ 'quit', 'UNBIND' ],
     [ 'foo', 'GET' ]
-  ])("path 'foo/%s' implies method '%s'", (pathBit, expectedMethod) => {
-    const { method } = processCommand([ 'foo', pathBit ])
+  ])("path 'foo/%s' implies method '%s'", async (pathBit, expectedMethod) => {
+    const { method } = await processCommand([ 'foo', pathBit ])
     expect(method).toBe(expectedMethod)
   })
   
@@ -46,8 +46,8 @@ describe('processCommand', () => {
     [ [ 'foo', 'create', '--', 'bar=1' ], '/foo/create' ],
     [ [ 'foo', 'bar', '--', 'baz=1' ], '/foo/bar?baz=1'],
     [ [ 'foo', 'bar', '--', 'baz=1', 'bobo' ], '/foo/bar?baz=1&bobo=true']
-  ])(`command '%p' yields url '${PROTOCOL}://${SERVER}:${PORT}%s'`, (commands, expectedPath) => {
-    const { url } = processCommand(commands)
+  ])(`command '%p' yields url '${PROTOCOL}://${SERVER}:${PORT}%s'`, async (commands, expectedPath) => {
+    const { url } = await processCommand(commands)
     expect(url).toBe(`${PROTOCOL}://${SERVER}:${PORT}${expectedPath}`)
   })
 })

@@ -3,16 +3,18 @@ import * as sysPath from 'node:path'
 
 import { formatTerminalText, processCommand } from './lib'
 
-const args = process.argv.slice(2)
+const args = process.argv.slice(2);
 
-// const { accept, method, path, data, url } = processCommand(args)
-const { fetchOpts, url } = processCommand(args);
 
 (async () => {
+  const { fetchOpts, url } = await processCommand(args)
+
   const response = await fetch(url, fetchOpts)
+
   const contentType = response.headers.get('Content-Type')
   const disposition = response.headers.get('Content-Disposition')
   const status = response.status
+
   if (disposition?.startsWith('attachment')) { // save the file
     let outputFileName = 'output'
     const [ , fileNameBit ] = disposition.split(/;\s*/)
