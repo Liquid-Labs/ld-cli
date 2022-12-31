@@ -3,24 +3,28 @@
 // function colors() { local i=1; while (( $i <= $# )); do printf "\e[48;5;${!i}m "; i=$(( $i + 1 )); done; printf "\e[0m\n"; }
 // then: colors 11 220 8
 const tCodes = {
-  // non-color control codes
+  // universal reset
   rst : "\x1b[0m",
+  // basic non-color / semantic codes
   bright : "\x1b[1m",
   bold : "\x1b[1m", // bold and bright are aliases
   dim : "\x1b[2m",
   underscore : "\x1b[4m",
   blink : "\x1b[5m",
+  // extended semantic codes
+  em: "\x1b[96m", // birght cyan
+  error: "\x1b[91m", // bright red
+  warn: "\x1b[93m", // bright yellow/gold
+  warning: "\x1b[93m",
+  // misc control codes
   reverse : "\x1b[7m",
   hidden : "\x1b[8m",
-  // semantic formatting
-  error: "\x1b[91m", // bright red
-  warning: "\x1b[93m", // bright yellow/gold
   // standard foreground colors
   black : "\x1b[30m",
   red : "\x1b[31m",
   green : "\x1b[32m",
   yellow : "\x1b[33m", // more of a gold, but we'll stick with the traditional names
-  gold : "\x1b[33m",
+  gold : "\x1b[33m", // alias for 'yellow'
   blue : "\x1b[34m",
   magenta : "\x1b[35m",
   cyan : "\x1b[36m",
