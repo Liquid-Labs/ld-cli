@@ -5,9 +5,8 @@ default: all
 SHELL:=/bin/bash
 
 STAGING:=.build
-NPM_BIN:=$(shell npm bin)
-BASH_ROLLUP:=$(NPM_BIN)/bash-rollup
-CATALYST_SCRIPTS:=$(NPM_BIN)/catalyst-scripts
+BASH_ROLLUP:=npx bash-rollup
+CATALYST_SCRIPTS:=npx catalyst-scripts
 
 include make/*.makefile
 
