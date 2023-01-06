@@ -63,6 +63,9 @@ const processCommand = async (args) => {
   if (method === undefined) {
     const api = JSON.parse(await fs.readFile(process.env.HOME + '/.liq/core-api.json'))
     const endpointSpec = api.find((s) => path.match(new RegExp(s.matcher)))
+    if (!endpointSpec) {
+      throw new Error(`Did not find endpoint for path: ${path}`)
+    }
 
     method = endpointSpec.method
   }
