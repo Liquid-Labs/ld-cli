@@ -10,11 +10,23 @@ const tCodes = {
   bold : { '*': "\x1b[1m" }, // bold and bright are aliases
   dim : { '*': "\x1b[2m" },
   underscore : { '*': "\x1b[4m" },
+  underline : { '*': "\x1b[4m" },
   blink : { '*': "\x1b[5m" },
   reverse : { '*': "\x1b[7m" },
   hidden : { '*': "\x1b[8m" },
   // semantic codes
+  h1: { 
+    greenOnBlack: "\x1b[38;5;226m\x1b[4m"/* canary yellow + underscore */, 
+    dark: "\x1b[38;5;226m\x1b[4m", 
+    light: "\x1b[92m\x1b[4m" /* bright green + underscore */ 
+  },
+  h2: {
+    greenOnBlack: "\x1b[38;5;226m"/* canary yellow */, 
+    dark: "\x1b[38;5;226m", 
+    light: "\x1b[92m" /* bright green */ 
+  },
   code: { greenOnBlack: "\x1b[96m"/* birght cyan */, dark: "\x1b[96m", light: "\x1b[37m"/* cyan */ }, 
+  danger: { "*": "\x1b[97m\x1b[91m"/* white on bright red bg */ },
   em: { greenOnBlack: "\x1b[35m"/* magenta */, dark: "\x1b[35m", light: "\x1b[95m"/* bright magenta */ },
   error: { greenOnBlack: "\x1b[91m"/* bright red */, dark: "\x1b[91m", light: "\x1b[31m"/* red */ },
   warn: { greenOnBlack: "\x1b[93m"/* bright yellow/gold */, dark: "\x1b[93m", light: "\x1b[63m"/* yellow/gold */ },
