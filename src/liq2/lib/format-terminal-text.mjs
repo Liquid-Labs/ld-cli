@@ -73,7 +73,7 @@ const formatTerminalText = (tText) => {
   // TODO: find for now, but probably more efficient to extract the tags we need. 
   for (const [ key, code ] of Object.entries(tCodes)) {
     const replacer = new RegExp('<' + key + '>', 'g')
-    tText = tText.replaceAll(replacer, code['*'] || code.greenOnBlack)
+    tText = tText.replaceAll(replacer, code.greenOnBlack || code['*'])
   }
   // general color code support
   tText = tText.replaceAll(/<fgc:(\d+)>/g, "\x1b[38;5;$1m")
