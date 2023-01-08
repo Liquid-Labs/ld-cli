@@ -5,6 +5,7 @@ source ./traps.sh
 
 log-start
 fi
+source ./git-lib.sh
 source ./global-vars.sh
 source ./help.sh
 source ./options.sh

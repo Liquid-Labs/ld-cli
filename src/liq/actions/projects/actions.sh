@@ -196,7 +196,9 @@ projects-create() {
   if [[ -z "$NO_FORK" ]]; then
     echo "Creating fork..."
     hub fork --remote-name workspace
-    git branch -u upstream/master master
+    local DEFAULT_BRANCH
+    DEFAULT_BRANCH=$(lib-git-determine-default-branch)
+    git branch -u upstream/${DEFAULT_BRANCH} ${DEFAULT_BRANCH}
   fi
   if [[ -z "$NEW" ]] && [[ -z "$FOLLOW" ]]; then
     echo "Un-following source repo..."
@@ -607,9 +609,11 @@ projects-sync() {
   CURR_BRANCH="$(workCurrentWorkBranch)"
 
   echo "Fetching remote histories..."
-  git fetch upstream master:remotes/upstream/master
-  if [[ "$CURR_BRANCH" != "master" ]]; then
-    git fetch workspace master:remotes/workspace/master
+  local DEFAULT_BRANCH
+  DEFAULT_BRANCH=$(lib-git-determine-default-branch)  
+  git fetch upstream ${DEFAULT_BRANCH}:remotes/upstream/${DEFAULT_BRANCH}
+  if [[ "$CURR_BRANCH" != "${DEFAULT_BRANCH}" ]]; then
+    git fetch workspace ${DEFAULT_BRANCH}:remotes/workspace/${DEFAULT_BRANCH}
     git fetch workspace "${CURR_BRANCH}:remotes/workspace/${CURR_BRANCH}"
   fi
   echo "Fetch done."
@@ -621,36 +625,38 @@ projects-sync() {
   cleanupMaster() {
     cd "${LIQ_PLAYGROUND}/${PROJECT}"
     # heh, need this to always be 'true' or 'set -e' complains
-    [[ ! -d _master ]] || git worktree remove _master
+    [[ ! -d _main ]] || git worktree remove _main
   }
 
-  REMOTE_COMMITS=$(git rev-list --right-only --count master...upstream/master)
+  REMOTE_COMMITS=$(git rev-list --right-only --count ${DEFAULT_BRANCH}...upstream/${DEFAULT_BRANCH})
   if (( $REMOTE_COMMITS > 0 )); then
-    echo "Syncing with upstream master..."
+    local DEFAULT_BRANCH
+    DEFAULT_BRANCH=$(lib-git-determine-default-branch)
+    echo "Syncing with upstream ${DEFAULT_BRANCH}..."
     cd "${PROJ_DIR}"
-    if [[ "$CURR_BRANCH" != 'master' ]]; then
-      (git worktree add _master master \
-        || echoerrandexit "Could not create 'master' worktree.") \
-      && { cd _master; git merge remotes/upstream/master; } || \
-          { cleanupMaster; echoerrandexit "Could not merge upstream master to local master."; }
+    if [[ "$CURR_BRANCH" != "${DEFAULT_BRANCH}" ]]; then
+      (git worktree add _main ${DEFAULT_BRANCH} \
+        || echoerrandexit "Could not create '${DEFAULT_BRANCH}' worktree.") \
+      && { cd _main; git merge remotes/upstream/${DEFAULT_BRANCH}; } || \
+          { cleanupMaster; echoerrandexit "Could not merge upstream ${DEFAULT_BRANCH} to local ${DEFAULT_BRANCH}."; }
       MASTER_UPDATED=true
     else
-      git pull upstream master \
-        || echoerrandexit "There were problems merging upstream master to local master."
+      git pull upstream ${DEFAULT_BRANCH} \
+        || echoerrandexit "There were problems merging upstream ${DEFAULT_BRANCH} to local ${DEFAULT_BRANCH}."
     fi
   fi
-  echo "Upstream master synced."
+  echo "Upstream ${DEFAULT_BRANCH} synced."
 
-  if [[ "$CURR_BRANCH" != "master" ]]; then
-    REMOTE_COMMITS=$(git rev-list --right-only --count master...workspace/master)
+  if [[ "$CURR_BRANCH" != "${DEFAULT_BRANCH}" ]]; then
+    REMOTE_COMMITS=$(git rev-list --right-only --count ${DEFAULT_BRANCH}...workspace/${DEFAULT_BRANCH})
     if (( $REMOTE_COMMITS > 0 )); then
-      echo "Syncing with workspace master..."
-      cd "${PROJ_DIR}/_master"
-      git merge remotes/workspace/master || \
-          { cleanupMaster; echoerrandexit "Could not merge upstream master to local master."; }
+      echo "Syncing with workspace ${DEFAULT_BRANCH}..."
+      cd "${PROJ_DIR}/_main"
+      git merge remotes/workspace/${DEFAULT_BRANCH} || \
+          { cleanupMaster; echoerrandexit "Could not merge upstream ${DEFAULT_BRANCH} to local ${DEFAULT_BRANCH}."; }
       MASTER_UPDATED=true
     fi
-    echo "Workspace master synced."
+    echo "Workspace ${DEFAULT_BRANCH} synced."
     cleanupMaster
 
     REMOTE_COMMITS=$(git rev-list --right-only --count ${CURR_BRANCH}...workspace/${CURR_BRANCH})
@@ -661,12 +667,12 @@ projects-sync() {
     echo "Workspace workbranch synced."
 
     if [[ -z "$NO_WORK_MASTER_MERGE" ]] \
-         && ( [[ "$MASTER_UPDATED" == true ]] || ! git merge-base --is-ancestor master $CURR_BRANCH ); then
-      echo "Merging master updates to work branch..."
-      git merge master --no-commit --no-ff || true # might fail with conflicts, and that's OK
+         && ( [[ "$MASTER_UPDATED" == true ]] || ! git merge-base --is-ancestor ${DEFAULT_BRANCH} $CURR_BRANCH ); then
+      echo "Merging ${DEFAULT_BRANCH} updates to work branch..."
+      git merge ${DEFAULT_BRANCH} --no-commit --no-ff || true # might fail with conflicts, and that's OK
       if git diff-index --quiet HEAD "${PROJ_DIR}" \
          && git diff --quiet HEAD "${PROJ_DIR}"; then
-        echowarn "Hmm... expected to see changes from master, but none appeared. It's possible the changes have already been incorporated/recreated without a merge, so this isn't necessarily an issue, but you may want to double check that everything is as expected."
+        echowarn "Hmm... expected to see changes from ${DEFAULT_BRANCH}, but none appeared. It's possible the changes have already been incorporated/recreated without a merge, so this isn't necessarily an issue, but you may want to double check that everything is as expected."
       else
         if ! git diff-index --quiet HEAD "${PROJ_DIR}/dist" || ! git diff --quiet HEAD "${PROJ_DIR}/dist"; then # there are changes in ./dist
           echowarn "Backing out merge updates to './dist'; rebuild to generate current distribution:\nliq projects build $PROJECT"
@@ -674,7 +680,7 @@ projects-sync() {
         fi
         if git diff --quiet "${PROJ_DIR}"; then # no conflicts
           git add -A
-          git commit -m "Merge updates from master to workbranch."
+          git commit -m "Merge updates from ${DEFAULT_BRANCH} to workbranch."
           work-save --backup-only
           echo "Master updates merged to workbranch."
         else
