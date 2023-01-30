@@ -27,7 +27,7 @@ const args = process.argv.slice(2);
     console.log(`Saved '${contentType}' file '${outputFileName}'.`)
   }
   else { // output to screen
-    if (status >= 400) {
+    if (status >= 400 && false) { // TODO: make optional
       const errorSource = status < 500 ? 'Client' : 'Server'
       console.error(formatTerminalText(`<error>${errorSource} error ${status}: ${response.statusText}<rst>`))
     }
