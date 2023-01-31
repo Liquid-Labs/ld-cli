@@ -25,9 +25,9 @@ const tCodes = {
     dark: "\x1b[38;5;226m", 
     light: "\x1b[92m" /* bright green */ 
   },
-  code: { greenOnBlack: "\x1b[96m"/* birght cyan */, dark: "\x1b[96m", light: "\x1b[37m"/* cyan */ }, 
+  code: { greenOnBlack: "\x1b[37m"/* light grey */, dark: "\x1b[37m", light: "\x1b[90m"/* dark grey */ }, 
   danger: { "*": "\x1b[97m\x1b[41m"/* white on bright red bg */ },
-  em: { greenOnBlack: "\x1b[35m"/* magenta */, dark: "\x1b[35m", light: "\x1b[95m"/* bright magenta */ },
+  em: { greenOnBlack: "\x1b[96m"/* magenta */, dark: "\x1b[96m", light: "\x1b[95m"/* bright magenta */ },
   error: { greenOnBlack: "\x1b[91m"/* bright red */, dark: "\x1b[91m", light: "\x1b[31m"/* red */ },
   warn: { greenOnBlack: "\x1b[93m"/* bright yellow/gold */, dark: "\x1b[93m", light: "\x1b[63m"/* yellow/gold */ },
   // alias for 'warn'
