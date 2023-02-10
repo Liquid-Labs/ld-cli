@@ -1,4 +1,5 @@
 import * as fs from 'node:fs/promises'
+import * as fsPath from 'node:path'
 
 import { PORT, PROTOCOL, SERVER } from './constants'
 
@@ -38,12 +39,29 @@ const processCommand = async (args) => {
     args.shift()
   }
 
+  let prevArg = null
   for (const arg of args) {
     if (arg === '--' && setParams === false) {
       setParams = true
     }
     else if (setParams !== true) {
-      pathBits.push(encodeURIComponent(arg))
+      if (arg === '.' && prevArg === 'projects') {
+        const cwd = process.cwd()
+        const project = fsPath.basename(cwd)
+        const org = fsPath.basename(fsPath.dirname(cwd))
+        const projectFQN = org + '/' + project
+
+        const projectURL = `${PROTOCOL}://${SERVER}:${PORT}/projects/${projectFQN}/detail`
+        console.log(projectURL)
+        const response = await fetch(projectURL)
+        console.log(response.status)
+        if (response.status !== 200) throw new Error(`Implied project '${projectFQN}' does not appear to exist`)
+
+        pathBits.push(org, project)
+      }
+      else {
+        pathBits.push(encodeURIComponent(arg))
+      }
     }
     else { // setup params
       let [ name, value = 'true', ...moreValue ] = arg.split(/\s*=\s*/)
@@ -56,6 +74,8 @@ const processCommand = async (args) => {
         data.push([ name, value ])
       }
     }
+
+    prevArg = arg
   }
 
   const path = '/' + pathBits.join('/')
