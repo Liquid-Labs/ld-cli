@@ -52,9 +52,7 @@ const processCommand = async (args) => {
         const projectFQN = org + '/' + project
 
         const projectURL = `${PROTOCOL}://${SERVER}:${PORT}/projects/${projectFQN}/detail`
-        console.log(projectURL)
         const response = await fetch(projectURL)
-        console.log(response.status)
         if (response.status !== 200) throw new Error(`Implied project '${projectFQN}' does not appear to exist`)
 
         pathBits.push(org, project)
