@@ -25,7 +25,7 @@ LIQ_CLI_ALL_FILES:=$(shell find $(LIQ_CLI_SRC) \( -name "*.js" -o -name "*.mjs" 
 LIQ_CLI_TEST_SRC_FILES:=$(shell find $(LIQ_CLI_SRC) -name "*.test.js")
 LIQ_CLI_TEST_BUILT_FILES:=$(patsubst $(LIQ_CLI_SRC)/%, test-staging/%, $(LIQ_CLI_TEST_SRC_FILES))
 
-LIQ_CLI:=dist/liq-work.js
+LIQ_CLI:=dist/liq2.js
 
 PKG_FILES:=package.json package-lock.json
 LIQ_SRC:=$(shell find src/liq -name "*.sh" -not -name "cli.sh")
