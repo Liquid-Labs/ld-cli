@@ -3,7 +3,7 @@ ERROR:=$(error This version of make does not support required 'grouped-target' (
 endif
 
 .DELETE_ON_ERROR:
-.PHONY: all test docker-build docker-run  $(TESTS)
+.PRECIOUS: last-lint.txt last-test.txt
 .PHONY: all build docker-build docker-run docker-debug docker-debug-root docker-publish dependency-graph lint lint-fix qa test test-js test-shell
 
 default: build
