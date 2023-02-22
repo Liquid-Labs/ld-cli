@@ -21,7 +21,8 @@
     "clean": "rm -rf package-lock.json node_modules/ dist/",
     "preversion": "npm test && npm run lint",
     "version": "npm run build && git add -fA dist",
-    "postversion": "git push --tags upstream"
+    "postversion": "git push --tags upstream",
+    "qa": "make qa"
   },
   "repository": {
     "type": "git",
