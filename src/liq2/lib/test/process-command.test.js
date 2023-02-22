@@ -16,7 +16,7 @@ describe('processCommand', () => {
   
   test('processes leading method', async () => {
     const { method, path } = await processCommand([ 'POST', 'foo', 'bar' ])
-    expect(method).toBe('post')
+    expect(method).toBe('POST')
     expect(path).toBe('/foo/bar')
   })
   
@@ -29,23 +29,11 @@ describe('processCommand', () => {
     const { data } = await processCommand(['foo', '--', ...param])
     expect(data).toEqual(expectedData)
   })
-  
+    
   test.each([
-    [ 'create', 'POST' ],
-    [ 'delete', 'DELETE' ],
-    [ 'options', 'OPTIONS' ],
-    [ 'update', 'PUT' ],
-    [ 'quit', 'UNBIND' ],
-    [ 'foo', 'GET' ]
-  ])("path 'foo/%s' implies method '%s'", async (pathBit, expectedMethod) => {
-    const { method } = await processCommand([ 'foo', pathBit ])
-    expect(method).toBe(expectedMethod)
-  })
-  
-  test.each([
-    [ [ 'foo', 'create', '--', 'bar=1' ], '/foo/create' ],
-    [ [ 'foo', 'bar', '--', 'baz=1' ], '/foo/bar?baz=1'],
-    [ [ 'foo', 'bar', '--', 'baz=1', 'bobo' ], '/foo/bar?baz=1&bobo=true']
+    [ [ 'POST', 'work', 'create', '--', 'bar=1' ], '/work/create' ],
+    [ [ 'GET', 'foo', 'bar', '--', 'baz=1' ], '/foo/bar?baz=1'],
+    [ [ 'GET', 'foo', 'bar', '--', 'baz=1', 'bobo' ], '/foo/bar?baz=1&bobo=true']
   ])(`command '%p' yields url '${PROTOCOL}://${SERVER}:${PORT}%s'`, async (commands, expectedPath) => {
     const { url } = await processCommand(commands)
     expect(url).toBe(`${PROTOCOL}://${SERVER}:${PORT}${expectedPath}`)

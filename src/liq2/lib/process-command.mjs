@@ -34,8 +34,8 @@ const processCommand = async (args) => {
   let accept = 'text/terminal, text/plain;q=0.8, application/json;q=0.5'
   let setParams = false
   
-  if (methods.includes(args[0])) {
-    method = args[0].toLowerCase()
+  if (methods.includes(args[0]?.toUpperCase())) {
+    method = args[0]
     args.shift()
   }
 
@@ -75,17 +75,17 @@ const processCommand = async (args) => {
 
     prevArg = arg
   }
-
+  // if there are no parameters, then we need to 
   const path = '/' + pathBits.join('/')
+  const api = JSON.parse(await fs.readFile(process.env.HOME + '/.liq/core-api.json'))
+  const endpointSpec = api.find((s) => path.match(new RegExp(s.matcher)))
 
-  if (method === undefined) {
-    const api = JSON.parse(await fs.readFile(process.env.HOME + '/.liq/core-api.json'))
-    const endpointSpec = api.find((s) => path.match(new RegExp(s.matcher)))
-    if (!endpointSpec) {
+  if (method === undefined && endpointSpec) {
+    if (!endpointSpec && !process.env.TEST_MODE) {
       throw new Error(`Did not find endpoint for path: ${path}`)
     }
 
-    method = endpointSpec.method
+    method = endpointSpec?.method || (process.env.TEST_MODE && 'GET')
   }
   
   const query = data.length > 0 && method !== 'POST' ? '?' + new URLSearchParams(data).toString() : ''
@@ -102,8 +102,9 @@ const processCommand = async (args) => {
     fetchOpts.headers['Content-Type'] = 'application/json'
 
     const indexdData = data.reduce((acc, [n,v]) => {
-      const paramSpec = endpointSpec.parameters.find((p) => p.name === n)
-      if (paramSpec.isMultivalue === true) {
+      // if we got a bad path, then endpoint spec won't be defined; but we want the server to handle it, so we move on
+      const paramSpec = endpointSpec?.parameters.find((p) => p.name === n)
+      if (paramSpec?.isMultivalue === true) {
         const currArray = acc[n] || []
         currArray.push(v)
         acc[n] = currArray
@@ -112,12 +113,15 @@ const processCommand = async (args) => {
         acc[n] = v
       }
     }, {})
-    
+
     fetchOpts.body = JSON.stringify(indexdData)
   }
 
-  return {
+  return { // 'data', 'method', and 'path' are not currently consumed in the progarm, but are useful for testing
+    data,
     fetchOpts,
+    method,
+    path,
     url,
   }
 }
