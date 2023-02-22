@@ -1,6 +1,12 @@
-.DELETE_ON_ERROR:
+ifneq (grouped-target, $(findstring grouped-target,$(.FEATURES)))
+ERROR:=$(error This version of make does not support required 'grouped-target' (4.3+).)
+endif
 
-default: all
+.DELETE_ON_ERROR:
+.PRECIOUS: last-lint.txt last-test.txt
+.PHONY: all build docker-build docker-run docker-debug docker-debug-root docker-publish dependency-graph lint lint-fix qa test test-js test-shell
+
+default: build
 
 SHELL:=/bin/bash
 
@@ -10,14 +16,27 @@ CATALYST_SCRIPTS:=npx catalyst-scripts
 
 include make/*.makefile
 
+SRC:=src
+TEST_STAGING:=test-staging
+
+LIQ_CLI_SRC:=$(SRC)/liq2
+LIQ_CLI_FILES:=$(shell find $(LIQ_CLI_SRC) \( -name "*.js" -o -name "*.mjs" \) -not -path "*/test/*" -not -name "*.test.js")
+LIQ_CLI_ALL_FILES:=$(shell find $(LIQ_CLI_SRC) \( -name "*.js" -o -name "*.mjs" \))
+LIQ_CLI_TEST_SRC_FILES:=$(shell find $(LIQ_CLI_SRC) -name "*.test.js")
+LIQ_CLI_TEST_BUILT_FILES:=$(patsubst $(LIQ_CLI_SRC)/%, test-staging/%, $(LIQ_CLI_TEST_SRC_FILES))
+
+LIQ_CLI:=dist/liq-work.js
+
 PKG_FILES:=package.json package-lock.json
 LIQ_SRC:=$(shell find src/liq -name "*.sh" -not -name "cli.sh")
 TEST_SRC:=$(shell find src/test -name "*.bats")
 LIB_CHANGELOG_SRC:=src/liq/actions/work/changelog/index.js $(shell find src/liq/actions/work/changelog/ -name "*.js" -not -name "index.js")
 DIST_CHANGELOG_JS:=dist/manage-changelog.js
-BUILD_FILES:=$(BUILD_FILES) dist/completion.sh dist/install.sh dist/liq.sh dist/liq-shell.sh dist/liq-source.sh $(DIST_CHANGELOG_JS)
+BUILD_FILES:=$(LIQ_CLI) dist/completion.sh dist/install.sh dist/liq.sh dist/liq-shell.sh dist/liq-source.sh $(DIST_CHANGELOG_JS)
 
-all: $(BUILD_FILES)
+build: $(BUILD_FILES)
+
+all: build
 
 clean:
 	rm -f liquid-labs-liq-cli-*.tgz
@@ -91,6 +110,7 @@ ${HOME}/.npmrc:
 	# END SENSITIVE DATA -------------------------------------
 	touch $@
 
+# Deprecated so not included in the 'test' target; keeping just in case we do want to resurrect (maybe for CI/CD?)
 test-shell: .docker-test-img-marker
 	docker run --tty liq-test
 
@@ -100,7 +120,9 @@ test-js:
 
 TESTS:=$(TESTS) test-js test-shell
 
-test: $(TESTS)
+# test: $(TESTS)
+
+qa: test lint
 
 DOCKER_DEBUG_CMD_BASE:=docker run --interactive --tty --mount type=bind,source="$${PWD}/docker-tmp",target=/home/liq/docker-tmp --entrypoint /bin/bash
 docker-debug: .docker-test-img-marker
@@ -115,7 +137,5 @@ docker-publish:
 	@cat "$${HOME}/.docker/config.json" | jq '.auths["https://index.docker.io/v1/"]' | grep -q '{}' || { echo -e "It does not appear that you're logged into docker.io. Try:\ndocker login --username=<your user name>"; exit 1; }
 	@echo "Login confirmed..."
 
-# dependency-graph:
-# 	make -Bnd test-cli | make2graph | dot -Tpng -o out.png
-
-.PHONY: all test clean docker-build docker-run docker-debug docker-debug-root docker-publish dependency-graph $(TESTS)
+dependency-graph:
+	make -Bnd test-cli | make2graph | dot -Tpng -o out.png
