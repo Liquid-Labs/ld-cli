@@ -8,6 +8,8 @@ node_modules/
 /.ver-cache
 /.docker-*-marker
 /.build
+/last-test.txt
+/last-lint.txt
 # the pack file which may be hanging around
 /*.tgz
 # SENSITIVE DATA -------------------------------
