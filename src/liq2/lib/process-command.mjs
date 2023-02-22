@@ -100,10 +100,19 @@ const processCommand = async (args) => {
 
   if (method === 'POST') {
     fetchOpts.headers['Content-Type'] = 'application/json'
-    const indexdData = data.reduce((acc, d) => {
-      acc[d[0]] = d[1]
-      return acc
+
+    const indexdData = data.reduce((acc, [n,v]) => {
+      const paramSpec = endpointSpec.parameters.find((p) => p.name === n)
+      if (paramSpec.isMultivalue === true) {
+        const currArray = acc[n] || []
+        currArray.push(v)
+        acc[n] = currArray
+      }
+      else {
+        acc[n] = v
+      }
     }, {})
+    
     fetchOpts.body = JSON.stringify(indexdData)
   }
 
