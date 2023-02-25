@@ -1,5 +1,5 @@
 import * as fs from 'node:fs/promises'
-import * as sysPath from 'node:path'
+import * as fsPath from 'node:path'
 
 import { formatTerminalText, processCommand } from './lib'
 
@@ -21,7 +21,7 @@ const args = process.argv.slice(2);
     const [, fileNameBit] = disposition.split(/;\s*/)
     if (fileNameBit.startsWith('filename=')) {
       const [, rawFileName] = fileNameBit.split(/=\s*/)
-      outputFileName = sysPath.basename(rawFileName.replace(/^['"]/, '').replace(/['"]$/, ''))
+      outputFileName = fsPath.basename(rawFileName.replace(/^['"]/, '').replace(/['"]$/, ''))
     }
 
     await fs.writeFile(outputFileName, (await response.blob()).stream())
