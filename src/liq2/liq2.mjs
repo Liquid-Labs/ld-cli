@@ -8,6 +8,8 @@ const args = process.argv.slice(2);
 (async() => {
   const { fetchOpts, url } = await processCommand(args)
 
+  fetchOpts.headers['X-CWD'] = fsPath.resolve(process.cwd())
+
   const response = await fetch(url, fetchOpts)
 
   const contentType = response.headers.get('Content-Type')
