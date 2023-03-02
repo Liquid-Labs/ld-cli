@@ -2,26 +2,22 @@
   "name": "@liquid-labs/liq-cli",
   "version": "1.0.0-prototype.18",
   "description": "A process aware development, testing, and deployment management tool.",
-  "main": "dist/liq2.js",
+  "main": "dist/liq.js",
   "bin": {
-    "liq2": "dist/liq2",
-    "liq": "dist/liq.sh",
-    "liq-shell": "dist/liq-shell.sh"
+    "liq": "dist/liq"
   },
   "files": [
     "dist/*"
   ],
   "scripts": {
-    "prebuild": "rm -rf ./dist",
     "build": "make all",
     "test": "make test",
     "install": "TERM=xterm ./dist/install.sh",
-    "lint": "JS_SRC=./src/liq catalyst-scripts lint",
-    "lint:fix": "JS_SRC=./src/liq catalyst-scripts lint-fix",
-    "clean": "rm -rf package-lock.json node_modules/ dist/",
-    "preversion": "npm test && npm run lint",
-    "version": "npm run build && git add -fA dist",
-    "postversion": "git push --tags upstream",
+    "lint": "make lint",
+    "lint:fix": "make lint-fix",
+    "clean": "make clean",
+    "preversion": "make qa",
+    "prepare": "npm run build",
     "qa": "make qa"
   },
   "repository": {
@@ -37,10 +33,7 @@
   "devDependencies": {
     "@liquid-labs/bash-rollup": "^1.0.0-alpha.4",
     "@liquid-labs/bash-toolkit": "^1.0.0-alpha.56",
-    "@liquid-labs/catalyst-scripts": "^1.0.0-alpha.57",
-    "dateformat": "^4.5.1",
-    "simple-git": "^2.40.0",
-    "yaml": "^1.10.2"
+    "@liquid-labs/catalyst-scripts": "^1.0.0-alpha.57"
   },
   "liq": {
     "orgBase": "git@github.com:liquid-labs/liquid-labs.git",
