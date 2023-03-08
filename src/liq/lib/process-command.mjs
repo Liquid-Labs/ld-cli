@@ -45,24 +45,11 @@ const processCommand = async(args) => {
       setParams = true
     }
     else if (setParams !== true) {
-      if (arg === '.' && prevArg === 'projects') {
-        const cwd = process.cwd()
-        const project = fsPath.basename(cwd)
-        const org = fsPath.basename(fsPath.dirname(cwd))
-        const projectFQN = org + '/' + project
-
-        const projectURL = `${PROTOCOL}://${SERVER}:${PORT}/projects/${projectFQN}/detail`
-        const response = await fetch(projectURL)
-        if (response.status !== 200) throw new Error(`Implied project '${projectFQN}' does not appear to exist`)
-
-        pathBits.push(org, project)
-      }
-      else {
-        pathBits.push(encodeURIComponent(arg))
-      }
+      pathBits.push(encodeURIComponent(arg))
     }
     else { // setup params
       let [name, value = 'true', ...moreValue] = arg.split(/\s*=\s*/)
+      // there may be '=' in the parameter value, so we re-build it
       value = [value, ...moreValue].join('=')
       if (name === 'format') {
         accept = extToMime(value)
