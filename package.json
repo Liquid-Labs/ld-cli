@@ -46,5 +46,8 @@
         "--skip-unused"
       ]
     }
+  },
+  "dependencies": {
+    "@liquid-labs/terminal-text": "^1.0.0-alpha.1"
   }
 }

@@ -1,7 +1,9 @@
 import * as fs from 'node:fs/promises'
 import * as fsPath from 'node:path'
 
-import { formatTerminalText, processCommand } from './lib'
+import { formatTerminalText } from '@liquid-labs/terminal-text'
+
+import { processCommand } from './lib'
 
 const args = process.argv.slice(2);
 
