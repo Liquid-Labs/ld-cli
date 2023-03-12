@@ -53,7 +53,7 @@ const args = process.argv.slice(2);
     }
     else {
       const terminalOpts = settings?.TERMINAL || {}
-      console.log(formatTerminalText(await response.text(), terminalOpts ))
+      console.log(formatTerminalText(await response.text(), terminalOpts))
     }
   }
 })()
