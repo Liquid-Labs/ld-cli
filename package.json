@@ -46,5 +46,9 @@
         "--skip-unused"
       ]
     }
+  },
+  "dependencies": {
+    "@liquid-labs/federated-json": "^1.0.0-alpha.33",
+    "@liquid-labs/terminal-text": "^1.0.0-alpha.1"
   }
 }

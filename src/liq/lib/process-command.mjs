@@ -1,5 +1,4 @@
 import * as fs from 'node:fs/promises'
-import * as fsPath from 'node:path'
 
 import { PORT, PROTOCOL, SERVER } from './constants'
 
@@ -39,7 +38,6 @@ const processCommand = async(args) => {
     args.shift()
   }
 
-  let prevArg = null
   for (const arg of args) {
     if (arg === '--' && setParams === false) {
       setParams = true
@@ -59,8 +57,6 @@ const processCommand = async(args) => {
         data.push([name, value])
       }
     }
-
-    prevArg = arg
   }
   // if there are no parameters, then we need to
   const path = '/' + pathBits.join('/')

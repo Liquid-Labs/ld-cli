@@ -1,11 +1,27 @@
 import * as fs from 'node:fs/promises'
 import * as fsPath from 'node:path'
 
-import { formatTerminalText, processCommand } from './lib'
+import { readFJSON } from '@liquid-labs/federated-json'
+import { formatTerminalText } from '@liquid-labs/terminal-text'
+
+import { processCommand } from './lib'
 
 const args = process.argv.slice(2);
 
 (async() => {
+  let settings
+  try {
+    settings = readFJSON(fsPath.join(process.env.HOME, '.liq', 'local-settings.yaml'))
+  }
+  catch (e) {
+    if (e.code === 'ENOENT') {
+      settings = {}
+    }
+    else {
+      throw e
+    }
+  }
+
   const { fetchOpts, url } = await processCommand(args)
 
   fetchOpts.headers['X-CWD'] = fsPath.resolve(process.cwd())
@@ -36,7 +52,8 @@ const args = process.argv.slice(2);
       console.log(JSON.stringify(await response.json(), null, '  '))
     }
     else {
-      console.log(formatTerminalText(await response.text()))
+      const terminalOpts = settings?.TERMINAL || {}
+      console.log(formatTerminalText(await response.text(), terminalOpts))
     }
   }
 })()
