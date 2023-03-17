@@ -3,10 +3,36 @@ import * as fsPath from 'node:path'
 
 import { readFJSON } from '@liquid-labs/federated-json'
 import { formatTerminalText } from '@liquid-labs/terminal-text'
+import { Questioner } from '@liquid-labs/question-and-answer'
 
 import { processCommand } from './lib'
 
 const args = process.argv.slice(2);
+
+const callEndpoint = async (args, bundle) => {
+  let { fetchOpts, url } = await processCommand(args)
+
+  fetchOpts.headers['X-CWD'] = fsPath.resolve(process.cwd()) // TODO: walk down until we find 'package.json'
+
+  return await fetch(url, fetchOpts)
+}
+
+const addArg = ({ args, parameter, paramType, value }) => {
+  if (!args.includes('--')) { args.push('--') }
+  if (paramType?.match(/bool(?:ean)?/i)) {
+    if (value === true) {
+      args.push(parameter)
+    }
+  }
+  else if (paramType === 'string' || paramType === undefined) {
+    // will escape with single '\', but we have to escape the escape
+    //                                              v       v 
+    args.push(`${parameter}='${value.replaceAll(/(['\\])/g, '\\$1' )}'`)
+  }
+  else {
+    args.push(parameter + '=' + value)
+  }
+}
 
 (async() => {
   let settings
@@ -22,12 +48,36 @@ const args = process.argv.slice(2);
     }
   }
 
-  const { fetchOpts, url } = await processCommand(args)
+  let response = await callEndpoint(args)
 
-  fetchOpts.headers['X-CWD'] = fsPath.resolve(process.cwd())
+  const isQnA = !!response.headers.get('X-Question-and-Answer')
 
-  const response = await fetch(url, fetchOpts)
+  if (isQnA) {
+    const questioner = new Questioner()
+    questioner.interogationBundle = await response.json()
 
+    await questioner.question()
+    const results = questioner.results
+    const bundle = {}
+
+    for (const { handling, parameter, paramType, value } of results) {
+      if (handling === 'parameter') {
+        addArg({ args, parameter, paramType, value })
+      }
+      else if (handling === 'bundle') {
+        bundle[parameter] = value
+      }
+    }
+
+    if (Object.keys(bundle).length > 0) {
+      addArg({ args, parameter: 'answers', paramType: 'string', value: JSON.stringify(bundle) })
+    }
+
+    response = await(callEndpoint(args))
+
+    process.stdout.write('\nRe-sending request with answers...')
+  }
+  
   const contentType = response.headers.get('Content-Type')
   const disposition = response.headers.get('Content-Disposition')
   // const status = response.status
