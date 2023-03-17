@@ -7,10 +7,10 @@ import { Questioner } from '@liquid-labs/question-and-answer'
 
 import { processCommand } from './lib'
 
-const args = process.argv.slice(2);
+const args = process.argv.slice(2)
 
-const callEndpoint = async (args, bundle) => {
-  let { fetchOpts, url } = await processCommand(args)
+const callEndpoint = async(args, bundle) => {
+  const { fetchOpts, url } = await processCommand(args)
 
   fetchOpts.headers['X-CWD'] = fsPath.resolve(process.cwd()) // TODO: walk down until we find 'package.json'
 
@@ -26,8 +26,8 @@ const addArg = ({ args, parameter, paramType, value }) => {
   }
   else if (paramType === 'string' || paramType === undefined) {
     // will escape with single '\', but we have to escape the escape
-    //                                              v       v 
-    args.push(`${parameter}='${value.replaceAll(/(['\\])/g, '\\$1' )}'`)
+    //                                              v       v
+    args.push(`${parameter}='${value.replaceAll(/(['\\])/g, '\\$1')}'`)
   }
   else {
     args.push(parameter + '=' + value)
@@ -70,14 +70,14 @@ const addArg = ({ args, parameter, paramType, value }) => {
     }
 
     if (Object.keys(bundle).length > 0) {
-      addArg({ args, parameter: 'answers', paramType: 'string', value: JSON.stringify(bundle) })
+      addArg({ args, parameter : 'answers', paramType : 'string', value : JSON.stringify(bundle) })
     }
 
-    response = await(callEndpoint(args))
+    response = await (callEndpoint(args))
 
     process.stdout.write('\nRe-sending request with answers...')
   }
-  
+
   const contentType = response.headers.get('Content-Type')
   const disposition = response.headers.get('Content-Disposition')
   // const status = response.status
