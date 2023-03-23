@@ -23,12 +23,7 @@ const addArg = ({ args, parameter, paramType, value }) => {
     if (value === true) { // We want this inside because we don't want to run outer if/else if we're bool
       args.push(parameter)
     }
-  }/*
-  else if (paramType === 'string' || paramType === undefined) {
-    // will escape with single '\', but we have to escape the escape
-    //                                              v       v
-    args.push(`${parameter}='${value.replaceAll(/(['\\])/g, '\\$1')}'`)
-  } */
+  }
   else {
     args.push(parameter + '=' + value)
   }
