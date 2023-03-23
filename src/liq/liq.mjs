@@ -23,12 +23,12 @@ const addArg = ({ args, parameter, paramType, value }) => {
     if (value === true) { // We want this inside because we don't want to run outer if/else if we're bool
       args.push(parameter)
     }
-  }
+  }/*
   else if (paramType === 'string' || paramType === undefined) {
     // will escape with single '\', but we have to escape the escape
     //                                              v       v
     args.push(`${parameter}='${value.replaceAll(/(['\\])/g, '\\$1')}'`)
-  }
+  }*/
   else {
     args.push(parameter + '=' + value)
   }
@@ -67,10 +67,12 @@ const addArg = ({ args, parameter, paramType, value }) => {
       await questioner.question()
       const results = questioner.results
 
-      const bundle = {}
+      const bundleResults = []
+      const bundle = { results: bundleResults}
       if (key !== undefined) bundle.key = key // we do this to save the characters of sending an undefined key
 
-      for (const { handling, parameter, paramType, value } of results) {
+      results.reduce((acc, r) => {
+        const { handling, parameter, paramType, value } = r
         if (handling === 'parameter') {
           addArg({ args, parameter, paramType, value })
         }
@@ -78,10 +80,11 @@ const addArg = ({ args, parameter, paramType, value }) => {
           addArg({ args, parameter : `${key}:${parameter}`, paramType, value })
         }
         else if (handling === undefined || handling === 'bundle') {
-          bundle[parameter] = value
+          acc.push(r)
           sendBundle = true
         }
-      }
+        return acc
+      }, bundleResults)
 
       answerBundles.push(bundle) // best practice is to send a key and access result values using the key, but we
       // always push a result bundle for each question bundle to facilicate position-based processing
