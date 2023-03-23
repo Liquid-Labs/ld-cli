@@ -46,7 +46,7 @@ const processCommand = async(args) => {
       pathBits.push(encodeURIComponent(arg))
     }
     else { // setup params
-      let [name, value = 'true', ...moreValue] = arg.split(/\s*=\s*/)
+      let [name, value = 'true', ...moreValue] = arg.split(/=/)
       // there may be '=' in the parameter value, so we re-build it
       value = [value, ...moreValue].join('=')
       if (name === 'format') {
