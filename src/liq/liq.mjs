@@ -28,7 +28,7 @@ const addArg = ({ args, parameter, paramType, value }) => {
     // will escape with single '\', but we have to escape the escape
     //                                              v       v
     args.push(`${parameter}='${value.replaceAll(/(['\\])/g, '\\$1')}'`)
-  }*/
+  } */
   else {
     args.push(parameter + '=' + value)
   }
@@ -68,7 +68,7 @@ const addArg = ({ args, parameter, paramType, value }) => {
       const results = questioner.results
 
       const bundleResults = []
-      const bundle = { results: bundleResults}
+      const bundle = { results : bundleResults }
       if (key !== undefined) bundle.key = key // we do this to save the characters of sending an undefined key
 
       results.reduce((acc, r) => {
@@ -90,7 +90,7 @@ const addArg = ({ args, parameter, paramType, value }) => {
       // always push a result bundle for each question bundle to facilicate position-based processing
     }
 
-    // if the answer bundle is truly empty, then we don't send it as the receiver probably doesn't support 'answers' 
+    // if the answer bundle is truly empty, then we don't send it as the receiver probably doesn't support 'answers'
     // parameter
     if (sendBundle === true) {
       addArg({ args, parameter : 'answers', paramType : 'string', value : JSON.stringify(answerBundles) })
