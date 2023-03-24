@@ -56,7 +56,7 @@ const addArg = ({ args, parameter, paramType, value }) => {
       const { title, key } = interrogationBundle
 
       if (title !== undefined) {
-        process.stdout.write(formatTerminalText(`<h1>${title}<rst>\n`))
+        process.stdout.write(formatTerminalText(`<h1>${title}<rst>\n\n`))
       }
 
       await questioner.question()
