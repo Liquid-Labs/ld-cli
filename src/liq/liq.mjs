@@ -4,6 +4,7 @@ import * as fsPath from 'node:path'
 import { readFJSON } from '@liquid-labs/federated-json'
 import { formatTerminalText } from '@liquid-labs/terminal-text'
 import { Questioner } from '@liquid-labs/question-and-answer'
+import { wrap } from '@liquid-labs/wrap-text'
 
 import { processCommand } from './lib'
 
@@ -120,7 +121,9 @@ const addArg = ({ args, parameter, paramType, value }) => {
     }
     else {
       const terminalOpts = settings?.TERMINAL || {}
-      console.log(formatTerminalText(await response.text(), terminalOpts))
+      const text = await response.text()
+      const wrappedText = wrap(text, { width : 80, ignoreTags : true, smartIndent : true })
+      console.log(formatTerminalText(wrappedText, terminalOpts))
     }
   }
 })()
