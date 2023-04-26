@@ -31,8 +31,6 @@
   },
   "homepage": "https://liquid-labs.github.io/liq-cli/",
   "devDependencies": {
-    "@liquid-labs/bash-rollup": "^1.0.0-alpha.4",
-    "@liquid-labs/bash-toolkit": "^1.0.0-alpha.56",
     "@liquid-labs/catalyst-scripts": "^1.0.0-alpha.57"
   },
   "liq": {
@@ -49,8 +47,8 @@
   },
   "dependencies": {
     "@liquid-labs/federated-json": "^1.0.0-alpha.33",
-    "@liquid-labs/question-and-answer": "^1.0.0-alpha.8",
-    "@liquid-labs/terminal-text": "^1.0.0-alpha.1",
+    "@liquid-labs/question-and-answer": "^1.0.0-alpha.10",
+    "@liquid-labs/terminal-text": "^1.0.0-alpha.2",
     "@liquid-labs/wrap-text": "^1.0.0-alpha.3"
   }
 }

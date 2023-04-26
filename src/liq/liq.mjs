@@ -6,7 +6,8 @@ import { formatTerminalText } from '@liquid-labs/terminal-text'
 import { Questioner } from '@liquid-labs/question-and-answer'
 import { wrap } from '@liquid-labs/wrap-text'
 
-import { processCommand } from './lib'
+import { processCommand } from './lib/process-command'
+import { setupCLI } from './lib/setup-cli'
 
 const args = process.argv.slice(2)
 
@@ -31,6 +32,11 @@ const addArg = ({ args, parameter, paramType, value }) => {
 }
 
 (async() => {
+  if (args.length === 1 && args[0] === 'setup') {
+    await setupCLI()
+    return
+  }
+
   let settings
   try {
     settings = readFJSON(fsPath.join(process.env.HOME, '.liq', 'local-settings.yaml'))
