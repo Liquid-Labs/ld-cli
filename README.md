@@ -1,16 +1,20 @@
 **_<span style="color:red">This is a alpha project.</span> Documentation and implementation may not be entirely in-sync._**
 
-liq is user-friendly development and process management framework. liq provides:
-* clear project specification guidelines,
-* a straightforward, well-defined development workflow
-* extensible libraries of (mostly) automatically enforced change and submission policies, and
-* built in CI/CD.
+liq is a modular, user-friendly development and process management framework. Some key modules include:
+
+- policy-aware software change control (for developers),
+- project best-practices setup and enforcement (for developers),
+- project CI/CD support (for devops),
+- self-adapting and fully tailored company policy (for HR),
+- policy training and awareness tools (for HR),
+- internal audits (for security and compliance),
+- comprehensive compliance tools (for security and compliance),
+- contract management (for legal and HR),
 
 ___
 
-* [Installation](#installation)
+* [Installation](#installation-and-setup)
 * [Basic usage](#basic-usage)
-   * [Setup](#setup)
    * [Doing work](#doing-work)
    * [Runtime management](#runtime-management)
 * [Policies](#policies)
@@ -19,19 +23,33 @@ ___
 * [Contributions and bounties](#contributions-and-bounties)
 * [Further reading](#further-reading)
 
-# Installation
+# Installation and setup
 
-`npm inistall -g @liquid-labs/liq-cli`
+If you have global install access:
+`npm install --production -g @liquid-labs/liq-cli`
+
+To setup 'global' installation under your user directory (in bash or zsh):
+```bash
+npm config set prefix "${HOME}/.npm-local/"
+mkdir -p "${HOME}/.npm-local/bin"
+# instead of the following, you can use an editor to modify the existing PATH settings
+[[ $SHELL =~ '/zsh$' ]] && SHELL_FILE=.zshenv \
+  || { [[ $SHELL =~ '/bash$' ]] && SHELL_FILE=.bashrc; } \
+  || echo 'Sorry, your shell is not recognized. Add ~/.npm-local/bin to the appropriate setup file'
+[[ -n "$SHELL_FILE" ]] \
+  && echo 'export PATH=${HOME}/.npm-local/bin/:$PATH' >> "${HOME}/${SHELL_FILE}" \
+  && source "${HOME}/${SHELL_FILE}"
+unset SHELL_FILE
+# now you can run the 'global' installation
+npm install --production -g @liquid-labs/liq-cli
+```
+
+Then, simply run:
+```bash
+liq setup
+```
 
 # Basic usage
-
-## Setup
-
-Setup your local environment. See [Usage: Setup](/docs/usage/Setup.md) for details.
- ```bash
- liq meta init
- liq projects import @liquid-labs/liquid-cli # or whatever
-```
 
 ## Developing
 
