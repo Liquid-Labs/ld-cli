@@ -37,6 +37,9 @@ const setupCLI = async() => {
   await questioner.question()
   const terminalStyle = questioner.get('TERMINAL_STYLE')
 
+  if (!('TERMINAL' in settings)) {
+    settings.TERMINAL = {}
+  }
   settings.TERMINAL.style = terminalStyle
 
   console.log(formatTerminalText(`Updating <code>${settingsPath}<rst>...`))
