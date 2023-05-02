@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import * as fs from 'node:fs/promises'
 import * as fsPath from 'node:path'
 
@@ -8,6 +9,10 @@ import { wrap } from '@liquid-labs/wrap-text'
 
 import { processCommand } from './lib/process-command'
 import { setupCLI } from './lib/setup-cli'
+import { setupLiqCompletion } from './lib/setup-liq-completion'
+import { setupLiqCore } from './lib/setup-liq-core'
+
+const liqHome = fsPath.join(process.env.HOME, '.liq')
 
 const args = process.argv.slice(2)
 
@@ -31,15 +36,22 @@ const addArg = ({ args, parameter, paramType, value }) => {
   }
 }
 
+if (existsSync(liqHome) !== true) {
+  console.error(formatTerminalText(`It does not look like liq has been setup (did not find <code>${liqHome}<rst>). Try:\n<em>liq setup<rst>`))
+  process.exit(12)
+}
+
 (async() => {
   if (args.length === 1 && args[0] === 'setup') {
     await setupCLI()
+    setupLiqCore()
+    await setupLiqCompletion()
     return
   }
 
   let settings
   try {
-    settings = readFJSON(fsPath.join(process.env.HOME, '.liq', 'local-settings.yaml'))
+    settings = readFJSON(fsPath.join(liqHome, 'local-settings.yaml'))
   }
   catch (e) {
     if (e.code === 'ENOENT') {
