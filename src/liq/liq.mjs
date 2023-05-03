@@ -36,13 +36,13 @@ const addArg = ({ args, parameter, paramType, value }) => {
   }
 }
 
-if (process.argv[2] !== 'setup' && existsSync(LIQ_HOME) !== true) {
+if (args[0] !== 'setup' && existsSync(LIQ_HOME) !== true) {
   console.error(formatTerminalText(wrap(`It does not look like liq has been setup (did not find <code>${LIQ_HOME}<rst>). Try:\n<em>liq setup<rst>`, { ignoreTags : true })))
   process.exit(12)
 }
 
 (async() => {
-  if (args.length === 1 && args[0] === 'setup') {
+  if (args[0] === 'setup') {
     if (await setupLiqHome() !== true) {
       console.log(wrap('\nBailing out. Review any messages above or submit a support request.'))
     }
