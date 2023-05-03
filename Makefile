@@ -119,6 +119,7 @@ $(LINT_PASS_MARKER) $(LINT_REPORT): $(CATALYST_JS_LIB_ALL_FILES)
 			--ignore-pattern '$(DOCS)/**/*' \
 			--ignore-pattern '$(DIST)/**/*' \
 			--ignore-pattern '$(TEST_STAGING)/**/*' \
+			--ignore-pattern '**/old-js/**/*' \
 			. \
 			| tee -a $(LINT_REPORT) \
 		touch $@ )
@@ -133,6 +134,7 @@ lint-fix:
 			--ignore-pattern '$(DOCS)/**/*' \
 			--ignore-pattern $(DIST)/**/* \
 			--ignore-pattern '$(TEST_STAGING)/**/*' \
+			--ignore-pattern '**/old-js/**/*' \
 			--fix . )
 
 
