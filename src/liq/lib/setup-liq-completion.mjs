@@ -4,17 +4,18 @@ import * as fsPath from 'node:path'
 
 import { refresh } from '@liquid-labs/edit-section'
 
-const possibleSystemCompletionPaths = [ 
-  fsPath.resolve( fsPath.sep + 'etc', 'bash_completion.d'), 
-  fsPath.resolve( fsPath.sep +'usr', 'local', 'etc', 'bash_completion.d')
+const possibleSystemCompletionPaths = [
+  fsPath.resolve(fsPath.sep + 'etc', 'bash_completion.d'),
+  fsPath.resolve(fsPath.sep + 'usr', 'local', 'etc', 'bash_completion.d')
 ]
 const localBashCompletionPath = fsPath.resolve(process.env.HOME, '.bash_completion')
 const possibleBashConfigFiles = [
-  fsPath.join(process.env.HOME, '.bash_profile'),
+  fsPath.join(process.env.HOME, '.bashrc'),
   fsPath.join(process.env.HOME, '.profile')
 ]
 
-const setupLiqCompletion = async () => {
+const setupLiqCompletion = async() => {
+  console.log(wrap('Setting up bash completion...'))
   let completionConfigPath
   for (const testPath of possibleSystemCompletionPaths) {
     try {
@@ -27,7 +28,7 @@ const setupLiqCompletion = async () => {
 
   if (completionConfigPath === undefined) {
     if (!existsSync(localBashCompletionPath)) {
-      await fs.mkdir(localBashCompletionPath, { recursive: true })
+      await fs.mkdir(localBashCompletionPath, { recursive : true })
     }
     completionConfigPath = localBashCompletionPath
   }
@@ -47,13 +48,14 @@ const setupLiqCompletion = async () => {
   }
 
   if (bashConfig === undefined) {
-    console.error('Could not set up completion; did not find a terminal config file.')
+    bashConfig = possibleBashConfigFiles[0]
+    await fs.writeFile(bashConfig, '# .bashrc - executed for non-login interactive shells\n')
   }
 
   const content = `[ -f '${completionTarget}' ] && . '${completionTarget}'`
-  refresh({ content, file: bashConfig, sectionKey: 'liq completion' })
+  refresh({ content, file : bashConfig, sectionKey : 'liq completion' })
 
-  console.log(`To enable completion, you must open a new shell, or try:\nsource ${bashConfig}`)
+  console.log(formatTerminalText(wrap(`To enable completion, you must open a new shell, or try:\n<em>source ${bashConfig}<rst>`, { ignoreTags: true })))
 }
 
 export { setupLiqCompletion }

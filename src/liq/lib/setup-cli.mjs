@@ -1,4 +1,3 @@
-import { existsSync } from 'node:fs'
 import * as fsPath from 'node:path'
 
 import { readFJSON, writeFJSON } from '@liquid-labs/federated-json'
@@ -9,11 +8,11 @@ const liqHome = fsPath.join(process.env.HOME, '.liq')
 const settingsPath = fsPath.join(liqHome, 'local-settings.yaml')
 
 const settingsQuestions = {
-  actions: [
+  actions : [
     {
-      prompt: 'Which terminal highlighting scheme should be used?',
-      options: validStyles,
-      parameter: 'TERMINAL_STYLE'
+      prompt    : 'Which terminal highlighting scheme should be used?',
+      options   : validStyles,
+      parameter : 'TERMINAL_STYLE'
     }
   ]
 }
@@ -32,7 +31,7 @@ const setupCLI = async() => {
     }
   }
 
-  const questioner = new Questioner({ initialParameters: settings, interrogationBundle: settingsQuestions })
+  const questioner = new Questioner({ initialParameters : settings, interrogationBundle : settingsQuestions })
 
   await questioner.question()
   const terminalStyle = questioner.get('TERMINAL_STYLE')
@@ -43,7 +42,7 @@ const setupCLI = async() => {
   settings.TERMINAL.style = terminalStyle
 
   console.log(formatTerminalText(`Updating <code>${settingsPath}<rst>...`))
-  writeFJSON({ file: settingsPath, data: settings })
+  writeFJSON({ file : settingsPath, data : settings })
 }
 
 export { setupCLI }

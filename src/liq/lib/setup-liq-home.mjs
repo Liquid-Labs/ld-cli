@@ -8,12 +8,12 @@ import { LIQ_HOME } from './constants'
 
 const setupLiqHome = async() => {
   if (existsSync(LIQ_HOME)) {
-    console.log(formatTerminalText(wrap(`Found existing liq home: <code>${LIQ_HOME}<rst>`, { ignoreTags: true })))
+    console.log(formatTerminalText(wrap(`Found existing liq home: <code>${LIQ_HOME}<rst>`, { ignoreTags : true })))
   }
   else {
-    console.log(formatTerminalText(wrap(`Creating liq home: <code>${LIQ_HOME}<rst>...`, { ignoreTags: true })))
+    console.log(formatTerminalText(wrap(`Creating liq home: <code>${LIQ_HOME}<rst>...`, { ignoreTags : true })))
     try {
-      await fs.mkdir(LIQ_HOME, { recursive: true })
+      await fs.mkdir(LIQ_HOME, { recursive : true })
     }
     catch (e) {
       console.log(`There was an error attempting to create the liq home directory: ${e.message}`)
