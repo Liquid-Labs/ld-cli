@@ -4,7 +4,7 @@ import * as fs from 'node:fs/promises'
 import { formatTerminalText } from '@liquid-labs/terminal-text'
 import { wrap } from '@liquid-labs/wrap-text'
 
-import { LIQ_HOME } from './constants'
+import { LIQ_HOME, LIQ_PLAYGROUND } from './constants'
 
 const setupLiqHome = async() => {
   if (existsSync(LIQ_HOME)) {
@@ -14,9 +14,10 @@ const setupLiqHome = async() => {
     console.log(formatTerminalText(wrap(`Creating liq home: <code>${LIQ_HOME}<rst>...`, { ignoreTags : true })))
     try {
       await fs.mkdir(LIQ_HOME, { recursive : true })
+      await fs.mkdir(LIQ_PLAYGROUND, { recursive: true })
     }
     catch (e) {
-      console.log(`There was an error attempting to create the liq home directory: ${e.message}`)
+      console.log(`There was an error attempting initialize the liq home directory: ${e.message}`)
       return false
     }
   }
