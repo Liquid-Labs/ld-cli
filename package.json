@@ -32,7 +32,7 @@
   "devDependencies": {
     "@liquid-labs/bash-rollup": "^1.0.0-alpha.6",
     "@liquid-labs/bash-toolkit": "^1.0.0-alpha.61",
-    "@liquid-labs/catalyst-scripts-node-project": "file:.yalc/@liquid-labs/catalyst-scripts-node-project"
+    "@liquid-labs/catalyst-scripts-node-project": "^1.0.0-alpha.12"
   },
   "liq": {
     "orgBase": "git@github.com:liquid-labs/liquid-labs.git",

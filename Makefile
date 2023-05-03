@@ -37,6 +37,9 @@ ifdef CATALYST_JS_CLI_SRC_PATH
 CATALYST_JS_CLI_FILES_SRC:=$(shell find $(CATALYST_JS_CLI_SRC_PATH) \( -name "*.js" -o -name "*.mjs" -o -name "*.cjs" \) -not -path "*/test/*" -not -name "*.test.js")
 endif
 
+LINT_IGNORE_PATTERNS:=--ignore-pattern '$(DIST)/**/*' \
+--ignore-pattern '$(TEST_STAGING)/**/*' \
+--ignore-pattern '$(DOCS)/**/*'
 
 # build rules
 INSTALL_BASE:=$(shell npm explore @liquid-labs/catalyst-scripts-node-project -- pwd)
@@ -99,8 +102,9 @@ $(UNIT_TEST_PASS_MARKER) $(UNIT_TEST_REPORT): package.json $(CATALYST_JS_TEST_FI
 	@( set -e; set -o pipefail; \
 		( cd $(TEST_STAGING) && $(CATALYST_JS_JEST) \
 			--config=$(INSTALL_BASE)/dist/jest/jest.config.js \
-			--runInBand 2>&1 ) \
-		| tee -a $(UNIT_TEST_REPORT) \
+			--runInBand \
+			$(TEST) 2>&1 ) \
+		| tee -a $(UNIT_TEST_REPORT); \
 		touch $@ )
 
 TEST_TARGETS+=$(UNIT_TEST_PASS_MARKER) $(UNIT_TEST_REPORT)
@@ -116,12 +120,9 @@ $(LINT_PASS_MARKER) $(LINT_REPORT): $(CATALYST_JS_LIB_ALL_FILES)
 		$(CATALYST_JS_ESLINT) \
 			--config $(INSTALL_BASE)/dist/eslint/eslint.config.js \
 			--ext .cjs,.js,.mjs,.cjs,.xjs \
-			--ignore-pattern '$(DOCS)/**/*' \
-			--ignore-pattern '$(DIST)/**/*' \
-			--ignore-pattern '$(TEST_STAGING)/**/*' \
-			--ignore-pattern '**/old-js/**/*' \
+			$(LINT_IGNORE_PATTERNS) \
 			. \
-			| tee -a $(LINT_REPORT) \
+			| tee -a $(LINT_REPORT); \
 		touch $@ )
 
 LINT_TARGETS+=$(LINT_PASS_MARKER) $(LINT_REPORT)
@@ -131,10 +132,7 @@ lint-fix:
 		$(CATALYST_JS_ESLINT) \
 			--config $(INSTALL_BASE)/dist/eslint/eslint.config.js \
 			--ext .js,.mjs,.cjs,.xjs \
-			--ignore-pattern '$(DOCS)/**/*' \
-			--ignore-pattern $(DIST)/**/* \
-			--ignore-pattern '$(TEST_STAGING)/**/*' \
-			--ignore-pattern '**/old-js/**/*' \
+			$(LINT_IGNORE_PATTERNS) \
 			--fix . )
 
 

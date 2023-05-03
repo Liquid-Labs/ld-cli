@@ -1,0 +1,1 @@
+LINT_IGNORE_PATTERNS+= --ignore-pattern='prototype/**/*'
