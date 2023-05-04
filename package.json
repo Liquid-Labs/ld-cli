@@ -4,7 +4,7 @@
   "description": "A process aware development, testing, and deployment management tool.",
   "main": "dist/liq.js",
   "bin": {
-    "liq": "dist/liq"
+    "liq": "dist/liq-cli.js"
   },
   "files": [
     "dist/*"
@@ -12,7 +12,6 @@
   "scripts": {
     "build": "make all",
     "test": "make test",
-    "install": "TERM=xterm ./dist/install.sh",
     "lint": "make lint",
     "lint:fix": "make lint-fix",
     "clean": "make clean",
@@ -31,9 +30,9 @@
   },
   "homepage": "https://liquid-labs.github.io/liq-cli/",
   "devDependencies": {
-    "@liquid-labs/bash-rollup": "^1.0.0-alpha.4",
-    "@liquid-labs/bash-toolkit": "^1.0.0-alpha.56",
-    "@liquid-labs/catalyst-scripts": "^1.0.0-alpha.57"
+    "@liquid-labs/bash-rollup": "^1.0.0-alpha.6",
+    "@liquid-labs/bash-toolkit": "^1.0.0-alpha.61",
+    "@liquid-labs/catalyst-scripts-node-project": "^1.0.0-alpha.12"
   },
   "liq": {
     "orgBase": "git@github.com:liquid-labs/liquid-labs.git",
@@ -48,9 +47,11 @@
     }
   },
   "dependencies": {
-    "@liquid-labs/federated-json": "^1.0.0-alpha.33",
-    "@liquid-labs/question-and-answer": "^1.0.0-alpha.8",
-    "@liquid-labs/terminal-text": "^1.0.0-alpha.1",
+    "@liquid-labs/edit-section": "^1.0.0-alpha.1",
+    "@liquid-labs/federated-json": "^1.0.0-alpha.34",
+    "@liquid-labs/npm-toolkit": "^1.0.0-alpha.3",
+    "@liquid-labs/question-and-answer": "^1.0.0-alpha.10",
+    "@liquid-labs/terminal-text": "^1.0.0-alpha.2",
     "@liquid-labs/wrap-text": "^1.0.0-alpha.3"
   }
 }

@@ -1,0 +1,9 @@
+COMPLETION_BIN:=$(DIST)/completion.sh
+COMPLETION_SRC:=$(SRC)/completion
+COMPLETION_FILES:=$(COMPLETION_SRC)/liq-completion.sh
+
+BUILD_TARGETS+=$(COMPLETION_BIN)
+
+$(COMPLETION_BIN): $(COMPLETION_FILES) $(PKG_FILES)
+	mkdir -p dist
+	$(BASH_ROLLUP) $< $@
