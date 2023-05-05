@@ -56,7 +56,7 @@ This will walk you through local configuration settings, install `@liquid-labs/l
 
 ### Command sequence and parameters
 
-Each liq command consists of a command sequence and zero or more parameters. The command sequence and parameters are separated by '--'. Parameters are in the form of `X=Y`. A bear parameter `X` is equivalent to `X=true`. E.g.:
+Each liq command consists of a command sequence and zero or more parameters. The command sequence and parameters are separated by '--'. Parameters are in the form of `X=Y`. A bare parameter `X` is equivalent to `X=true`. E.g.:
 ```bash
 liq work save -- summary='Fixed null pointer' dirtyOK
 #   |---v---| || |--------------v-----------| |--v--|
