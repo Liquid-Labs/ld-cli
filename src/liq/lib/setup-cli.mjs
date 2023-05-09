@@ -13,6 +13,14 @@ const settingsQuestions = {
       prompt    : 'Which terminal highlighting scheme should be used?',
       options   : validStyles,
       parameter : 'TERMINAL_STYLE'
+    },
+    {
+      statement : "80 or 120 would be typical limited column widths, or enter '0' to use the full terminal width."
+    },
+    {
+      prompt    : 'Preferred column width?',
+      paramType : 'int',
+      parameter : 'TERMINAL_WIDTH'
     }
   ]
 }
@@ -35,11 +43,13 @@ const setupCLI = async() => {
 
   await questioner.question()
   const terminalStyle = questioner.get('TERMINAL_STYLE')
+  const terminalWidth = questioner.get('TERMINAL_WIDTH')
 
   if (!('TERMINAL' in settings)) {
     settings.TERMINAL = {}
   }
   settings.TERMINAL.style = terminalStyle
+  settings.TERMINAL.width = terminalWidth
 
   console.log(formatTerminalText(`Updating <code>${settingsPath}<rst>...`))
   writeFJSON({ file : settingsPath, data : settings })

@@ -143,7 +143,7 @@ if (args[0] !== 'setup' && existsSync(LIQ_HOME) !== true) {
     else {
       const terminalOpts = settings?.TERMINAL || {}
       const text = await response.text()
-      const wrappedText = wrap(text, { width : 80, ignoreTags : true, smartIndent : true })
+      const wrappedText = wrap(text, { ignoreTags : true, smartIndent : true })
       console.log(formatTerminalText(wrappedText, terminalOpts))
     }
   }
