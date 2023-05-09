@@ -1,0 +1,8 @@
+Test git rev: 305da2d5b7d6c57567f499cf4447787185eca029
+
+/Users/zane/.liq/playground/liquid-labs/liq-cli/src/liq/lib/setup-liq-core.mjs
+  21:67  error  Trailing spaces not allowed  no-trailing-spaces
+
+✖ 1 problem (1 error, 0 warnings)
+  1 error and 0 warnings potentially fixable with the `--fix` option.
+

@@ -1,0 +1,28 @@
+Test git rev: d017f5f370fc3d75d9580e2ec96389a9d6195b70
+PASS liq/lib/test/process-command.test.js
+  processCommand
+    ✓ command '[]' yields path '/' (3 ms)
+    ✓ command '[ 'foo' ]' yields path '/foo' (2 ms)
+    ✓ command '[ 'foo', 'bar' ]' yields path '/foo/bar' (4 ms)
+    ✓ command '[ 'foo bar', 'baz' ]' yields path '/foo%20bar/baz' (1 ms)
+    ✓ processes leading method (1 ms)
+    ✓ parameter '[ 'foo=1' ]' yields '[[Array]]' (1 ms)
+    ✓ parameter '[ 'bar=hey there' ]' yields '[[Array]]' (1 ms)
+    ✓ parameter '[ 'baz' ]' yields '[[Array]]' (1 ms)
+    ✓ parameter '[ 'foo=1', 'baz' ]' yields '[[Array], [Array]]' (1 ms)
+    ✓ command '["POST", "work", "create", "--", "bar=1"]' yields url 'http://127.0.0.1:32600/work/create' (1 ms)
+    ✓ command '["GET", "foo", "bar", "--", "baz=1"]' yields url 'http://127.0.0.1:32600/foo/bar?baz=1' (2 ms)
+    ✓ command '["GET", "foo", "bar", "--", "baz=1", "bobo"]' yields url 'http://127.0.0.1:32600/foo/bar?baz=1&bobo=true' (1 ms)
+
+---------------------|---------|----------|---------|---------|-------------------
+File                 | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+---------------------|---------|----------|---------|---------|-------------------
+All files            |   82.22 |    67.94 |      80 |   78.46 |                   
+ constants.mjs       |     100 |      100 |     100 |     100 |                   
+ process-command.mjs |   78.94 |    65.27 |   77.77 |   75.86 | 8-25,53-54,91-93  
+---------------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 passed, 1 total
+Tests:       12 passed, 12 total
+Snapshots:   0 total
+Time:        0.156 s, estimated 1 s
+Ran all test suites.
