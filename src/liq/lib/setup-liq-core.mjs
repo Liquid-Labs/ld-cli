@@ -18,7 +18,7 @@ const setupLiqCore = () => {
     }
   }
   if (localPath !== undefined) {
-    install({ global : true, pkgs : [localPath], verbose : true })   
+    install({ global : true, pkgs : [localPath], verbose : true })
   }
   else {
     install({ global : true, pkgs : ['@liquid-labs/liq-core'], verbose : true, version : LIQ_CORE_VERSION })
