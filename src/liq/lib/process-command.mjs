@@ -43,7 +43,10 @@ const processCommand = async(args) => {
       setParams = true
     }
     else if (setParams !== true) {
-      pathBits.push(encodeURIComponent(arg))
+      // TODO: this is a workaround to allow space encoded names to retain their encoding; the problem is it's really 
+      // hard to get bash to respect spaces in completion options. I assume this will be alieviated when we move to zsh 
+      // and we can drop this.
+      pathBits.push(encodeURIComponent(arg).replace(/%25([A-F0-9]{2})/i, '%$1'))
     }
     else { // setup params
       let [name, value = 'true', ...moreValue] = arg.split(/=/)
