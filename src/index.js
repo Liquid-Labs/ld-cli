@@ -1,1 +1,3 @@
-import './liq-cli'
+import { startLiqCLI } from './liq-cli'
+
+startLiqCLI()

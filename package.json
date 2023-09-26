@@ -51,7 +51,7 @@
     "@liquid-labs/federated-json": "^1.0.0-alpha.34",
     "@liquid-labs/liq-defaults": "^1.0.0-alpha.3",
     "@liquid-labs/npm-toolkit": "^1.0.0-alpha.3",
-    "@liquid-labs/plugable-express-cli": "^1.0.0-alpha.1",
+    "@liquid-labs/plugable-express-cli": "^1.0.0-alpha.2",
     "@liquid-labs/question-and-answer": "^1.0.0-alpha.10",
     "@liquid-labs/terminal-text": "^1.0.0-alpha.2",
     "@liquid-labs/wrap-text": "^1.0.0-alpha.5"
