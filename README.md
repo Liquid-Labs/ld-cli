@@ -61,12 +61,12 @@ Each liq command consists of a command sequence and zero or more parameters. The
 liq work save -- summary='Fixed null pointer' dirtyOK
 #   |---v---| || |--------------v-----------| |--v--|
 #cmd sequence v   parameter with string value  boolean 'TRUE' parameter
-        param seperator
+#       param seperator
 ```
 
 ### Tab completion is your friend
 
-liq employs comprehensive **tab completion** so you can always hit `<TAB><TAB>` to get a list of options. You can see here the results for tab completion on each line:
+liq employs comprehensive __tab completion__ so you can always hit `<TAB><TAB>` to get a list of options. You can see here the results for tab completion on each line:
 
 !['liq' TAB-TAB shows top level options 'credentials', 'help', 'orgs', etc. 'liq work' TAB-TAB shows build, clean, etc. and open work units.](./assets/imgs/tab-completion-example.png "Tab completion examples")
 
@@ -112,4 +112,4 @@ Non-bounty contributions are also welcome. You may also refer to open, non-bount
 
 # Further reading
 
-For a more detailed look at liq, please refer to the [project documentation](/docs/toc.md).
+For a more detailed look at liq, please refer to the [project documentation](docs/toc.md).

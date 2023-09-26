@@ -1,1 +1,0 @@
-BASH_ROLLUP:=npx bash-rollup
