@@ -1,7 +1,0 @@
-theme: jekyll-theme-tactile
-include: ["./docs", "./docs/usage", "./docs/topics"]
-markdown: kramdown
-
-show_downloads: true
-
-homepage: https://liquid-labs.github.io/liq-cli/

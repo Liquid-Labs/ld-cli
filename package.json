@@ -32,7 +32,7 @@
   "devDependencies": {
     "@liquid-labs/bash-rollup": "^1.0.0-alpha.6",
     "@liquid-labs/bash-toolkit": "^1.0.0-alpha.61",
-    "@liquid-labs/catalyst-scripts-node-project": "^1.0.0-alpha.12"
+    "@liquid-labs/catalyst-scripts-node-project": "^1.0.0-alpha.22"
   },
   "liq": {
     "orgBase": "git@github.com:liquid-labs/liquid-labs.git",
@@ -49,7 +49,9 @@
   "dependencies": {
     "@liquid-labs/edit-section": "^1.0.0-alpha.1",
     "@liquid-labs/federated-json": "^1.0.0-alpha.34",
+    "@liquid-labs/liq-defaults": "^1.0.0-alpha.3",
     "@liquid-labs/npm-toolkit": "^1.0.0-alpha.3",
+    "@liquid-labs/plugable-express-cli": "^1.0.0-alpha.1",
     "@liquid-labs/question-and-answer": "^1.0.0-alpha.10",
     "@liquid-labs/terminal-text": "^1.0.0-alpha.2",
     "@liquid-labs/wrap-text": "^1.0.0-alpha.5"
