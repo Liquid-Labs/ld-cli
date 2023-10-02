@@ -1,0 +1,19 @@
+Test git rev: fe6e6fe17190f37d7ce1d4c0b18365cabb9eec45
+liq 1.0.0-prototype.18
+plugable-express-cli 1.0.0-alpha.5
+PASS test/liq-cli.test.js
+  startLiqCLI
+    ✓ can start the CLI process (defines necessary parameters) (1 ms)
+
+-------------|---------|----------|---------|---------|-------------------
+File         | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------|---------|----------|---------|---------|-------------------
+All files    |   88.88 |      100 |     100 |   86.66 |                   
+ index.js    |       0 |      100 |     100 |       0 | 1-3               
+ liq-cli.mjs |     100 |      100 |     100 |     100 |                   
+-------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        0.203 s, estimated 1 s
+Ran all test suites.
